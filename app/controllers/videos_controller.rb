@@ -1,7 +1,7 @@
 class VideosController < ApplicationController
 
   def index
-    @categories = Category.joins(:videos).order(:name).distinct
+    @categories = Category.joins(:videos).uniq
   end
 
   def show
