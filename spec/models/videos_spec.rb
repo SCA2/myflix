@@ -11,4 +11,15 @@ describe Video do
     expect(video).to eq(Video.first)
   end
 
+  it "belongs to no category" do
+    video = Video.create(title: 'Title')
+    expect(video.category).to be_nil
+  end
+
+  it "belongs to one category" do
+    video = Video.create(title: 'Title')
+    video.category = Category.create(name: 'Name')
+    expect(video.category).to be_nil
+  end
+
 end
