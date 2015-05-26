@@ -2,21 +2,14 @@ require 'spec_helper'
 
 describe Category do
 
-  it "saves a category" do
-    category = Category.create(name: 'Name')
-    expect(category).to eq(Category.first)
-  end
+  it { should validate_presence_of(:name) }
+  it { should have_many(:videos).order(:title) }
 
-  it "has no videos" do
-    category = Category.create(name: 'Name')
-    expect(category.videos).to eq(0)
-  end
-
-  it "has many videos" do
-    category = Category.create(name: 'Name')
-    category.videos << Video.create(title: 'Video 1')
-    category.videos << Video.create(title: 'Video 2')
-    expect(category.videos.count).to eq(2)
+  it "retrieves categories in name order" do
+    c = Category.create(name: 'Name c')
+    b = Category.create(name: 'Name b')
+    a = Category.create(name: 'Name a')
+    expect(Category.all).to eq [a, b, c]
   end
 
 end

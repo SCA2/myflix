@@ -2,24 +2,15 @@ require 'spec_helper'
 
 describe Video do
 
-  it "saves a video" do
-    video = Video.create( title: 'Title',
-                          description: 'Description',
-                          small_cover_url: 'small_url',
-                          large_cover_url: 'large_url',
-                          category_id: 0 )
-    expect(video).to eq(Video.first)
-  end
+  it { should belong_to(:category) }
+  it { should validate_presence_of(:title) }
+  it { should validate_presence_of(:description) }
 
-  it "belongs to no category" do
-    video = Video.create(title: 'Title')
-    expect(video.category).to be_nil
-  end
-
-  it "belongs to one category" do
-    video = Video.create(title: 'Title')
-    video.category = Category.create(name: 'Name')
-    expect(video.category).to be_nil
+  it "retrieves videos in title order" do
+    c = Video.create(title: 'Title c', description: 'Description c')
+    b = Video.create(title: 'Title b', description: 'Description b')
+    a = Video.create(title: 'Title a', description: 'Description a')
+    expect(Video.all).to eq [a, b, c]
   end
 
 end
