@@ -9,7 +9,7 @@ describe Category do
     c = Category.create(name: 'Name c')
     b = Category.create(name: 'Name b')
     a = Category.create(name: 'Name a')
-    expect(Category.all).to eq [a, b, c]
+    expect(Category.all.sorted).to eq [a, b, c]
   end
 
 end

@@ -10,7 +10,7 @@ describe Video do
     c = Video.create(title: 'Title c', description: 'Description c')
     b = Video.create(title: 'Title b', description: 'Description b')
     a = Video.create(title: 'Title a', description: 'Description a')
-    expect(Video.all).to eq [a, b, c]
+    expect(Video.all.sorted).to eq [a, b, c]
   end
 
 end
