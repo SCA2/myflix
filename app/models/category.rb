@@ -4,7 +4,6 @@ class Category < ActiveRecord::Base
   validates :name, presence: true
 
   def recent_videos  
-    v = videos.reorder(created_at: :desc).first(6)
-    # binding.pry
+    videos.reorder(created_at: :desc).first(6)
   end
 end
