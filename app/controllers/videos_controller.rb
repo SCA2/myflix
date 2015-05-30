@@ -1,5 +1,7 @@
 class VideosController < ApplicationController
 
+  before_action :authorize
+
   def index
     @categories = Category.joins(:videos).sorted.uniq
   end
