@@ -1,17 +1,19 @@
 class SessionsController < ApplicationController
 
-  before_action :already_signed_in
+  before_action :already_signed_in, except: :destroy
 
   def new
+    @user = User.new
   end
 
   def create
+    # binding.pry
     user = User.find_by(email: session_params[:email])
     if user && user.authenticate(session_params[:password])
       sign_in(user)
       redirect_to home_path, notice: "Signed in!"
     else
-      flash.now[:error] = "Email or password is invalid"
+      flash.now[:error] = "Email or password is invalid!"
       render :new
     end
   end
@@ -28,6 +30,6 @@ class SessionsController < ApplicationController
   end
 
   def session_params
-    params.permit(:email, :password)
+    params.require(:user).permit(:email, :password)
   end
 end
