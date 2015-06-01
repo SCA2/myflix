@@ -21,10 +21,13 @@ end
 group :development, :test do
   gem 'pry'
   gem 'pry-nav'
-  gem 'rspec-rails', '2.99'
+  gem 'pry-rails'
 end
 
 group :test do
+  gem 'fabrication'
+  gem 'faker'
+  gem 'rspec-rails', '2.99'
   gem 'database_cleaner', '1.2.0'
   gem 'shoulda-matchers', require: false
 end
