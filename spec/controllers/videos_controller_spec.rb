@@ -18,10 +18,16 @@ describe VideosController do
     end
 
     describe "GET show" do
-      let(:v) { Fabricate(:video) }
+      let(:v)   { Fabricate(:video) }
+      let(:r1)  { Fabricate(:review, video: v) }
+      let(:r2)  { Fabricate(:review, video: v) }
       it "sets @video variable" do
         get :show, id: v.id
         expect(assigns(:video)).to eq v
+      end
+      it "sets @reviews variable" do
+        get :show, id: v.id
+        expect(assigns(:reviews)).to include r1, r2
       end
     end
 

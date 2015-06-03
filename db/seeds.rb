@@ -81,3 +81,8 @@ Video.create!([
     category_id: Category.where(name: 'TV Comedies')[0][:id]
   }
 ])
+
+tester = User.create!(email: 'tester@example.com', name: 'Joe Tester', password: 'password')
+
+Review.create!(user: tester, video: Video.first, rating: 1, body: "This is a terrible movie." )
+Review.create!(user: tester, video: Video.first, rating: 5, body: "This is an excellent movie." )
