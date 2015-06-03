@@ -17,7 +17,6 @@ class ReviewsController < ApplicationController
 
   def review_params
     p = params.require(:review).permit(:rating, :body)
-    p = p.merge(user: current_user)
-    p = p.merge(video: @video)
+    p.merge(user: current_user, video: @video)
   end
 end
