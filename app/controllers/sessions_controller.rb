@@ -7,14 +7,13 @@ class SessionsController < ApplicationController
   end
 
   def create
-    # binding.pry
     user = User.find_by(email: session_params[:email])
     if user && user.authenticate(session_params[:password])
       sign_in(user)
       redirect_to home_path, notice: "Signed in!"
     else
-      flash.now[:error] = "Email or password is invalid!"
-      render :new
+      flash[:error] = "Email or password is invalid!"
+      redirect_to sign_in_path
     end
   end
 

@@ -45,8 +45,8 @@ describe SessionsController do
           expect(controller.signed_in?).to eq false
         end
 
-        it "renders new template" do
-          expect(response).to render_template :new
+        it "redirects to sign_in path" do
+          expect(response).to redirect_to sign_in_path
         end
 
         it "sets flash error" do
