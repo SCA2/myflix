@@ -36,4 +36,5 @@ class QueueItemsController < ApplicationController
   def queue_items_params
     params.require(:queue_item).permit(:user_id, :video_id).merge(order: queue_order)
   end
+
 end
