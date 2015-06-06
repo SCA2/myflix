@@ -7,7 +7,7 @@ class QueueItemsController < ApplicationController
   end
 
   def create
-    queue_item = QueueItem.new(queue_items_params)
+    queue_item = QueueItem.new(item_params)
     if queue_item.save
       flash[:notice] = "Video added to your queue!"
     else
@@ -16,10 +16,23 @@ class QueueItemsController < ApplicationController
     redirect_to queue_items_path
   end
 
+  def update_queue
+    ActiveRecord::Base.transaction do
+      if errors? QueueItem.update(queue_params.keys, queue_params.values)
+        flash[:error] = "Invalid list order"
+        raise ActiveRecord::Rollback
+      else
+        current_user.normalize_order
+      end
+    end
+    redirect_to my_queue_path
+  end
+
   def destroy
     queue_item = QueueItem.find(params[:id])
     if current_user.queue_items.include?(queue_item)
       queue_item.destroy
+      current_user.normalize_order
       redirect_to queue_items_path
     else
       flash[:alert] = "Please sign in!"
@@ -29,12 +42,17 @@ class QueueItemsController < ApplicationController
 
   private
 
-  def queue_order
-    current_user.queue_items.count + 1
+  def errors?(items)
+    items.any? { |i| i.errors.any? || i.user != current_user }
   end
 
-  def queue_items_params
-    params.require(:queue_item).permit(:user_id, :video_id).merge(order: queue_order)
+  def item_params
+    p = params.require(:queue_item).permit(:user_id, :video_id)
+    p.merge(order: current_user.next_item_order)
+  end
+
+  def queue_params
+    params.require(:queue_item)
   end
 
 end
