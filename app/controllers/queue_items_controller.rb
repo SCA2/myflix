@@ -18,11 +18,11 @@ class QueueItemsController < ApplicationController
 
   def update_queue
     ActiveRecord::Base.transaction do
-      if errors? QueueItem.update(queue_params.keys, queue_params.values)
-        flash[:error] = "Invalid list order"
-        raise ActiveRecord::Rollback
-      else
+      if current_user.update_queue(queue_params)
         current_user.normalize_order
+      else
+        flash[:error] = "Invalid input"
+        raise ActiveRecord::Rollback
       end
     end
     redirect_to my_queue_path
@@ -42,17 +42,13 @@ class QueueItemsController < ApplicationController
 
   private
 
-  def errors?(items)
-    items.any? { |i| i.errors.any? || i.user != current_user }
-  end
-
   def item_params
     p = params.require(:queue_item).permit(:user_id, :video_id)
     p.merge(order: current_user.next_item_order)
   end
 
   def queue_params
-    params.require(:queue_item)
+    params.permit(queue_items: [:id, :order, :rating]).require(:queue_items)
   end
 
 end

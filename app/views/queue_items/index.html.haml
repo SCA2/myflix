@@ -15,13 +15,13 @@
                 %th(width="15%") Genre
                 %th(width="15%") Remove
             %tbody
-              -@queue_items.each do |queue_item|
-                =fields_for('queue_item[]', queue_item) do |item|
-                  %tr
-                    %td= item.text_field :order, class: "form-control"
-                    %td= link_to item.object.video_title, item.object.video
-                    %td= button_to "Play", nil, class: "btn btn-default"
-                    %td= item.object.rating
-                    %td= link_to item.object.category_name, item.object.category
-                    %td= link_to "", item.object, method: :delete, class: "glyphicon glyphicon-remove"
+              -@queue_items.each do |item|
+                %tr
+                  = hidden_field_tag "queue_items[][id]", item.id
+                  %td= text_field_tag "queue_items[][order]", item.order, class: "form-control"
+                  %td= link_to item.video_title, item.video
+                  %td= button_to "Play", nil, class: "btn btn-default"
+                  %td= select_tag "queue_items[][rating]", review_options(item.rating), include_blank: true, class: "form-control"
+                  %td= link_to item.category_name, item.category
+                  %td= link_to "", item, method: :delete, class: "glyphicon glyphicon-remove"
           =submit_tag "Update Instant Queue", class: "btn btn-default"
