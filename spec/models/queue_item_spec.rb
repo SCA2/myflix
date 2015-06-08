@@ -28,6 +28,33 @@ describe QueueItem do
     end
   end
 
+  describe '#rating=' do
+    let(:user) { Fabricate(:user) }
+    let(:video) { Fabricate(:video) }
+    let(:queue_item) { Fabricate(:queue_item, user: user, video: video) }
+    it 'has valid fabricators' do
+      Fabricate(:review, user: user, video: video, rating: 1)
+      expect(queue_item.rating).to eq 1
+    end
+
+    it 'updates review rating if review exists' do
+      Fabricate(:review, user: user, video: video, rating: 1)
+      queue_item.rating = 5
+      expect(queue_item.reload.rating).to eq 5
+    end
+    
+    it 'removes review rating if review exists' do
+      Fabricate(:review, user: user, video: video, rating: 1)
+      queue_item.rating = nil
+      expect(queue_item.reload.rating).to be_nil
+    end
+
+    it 'creates review and rating if review does not exist' do
+      queue_item.rating = 5
+      expect(queue_item.reload.rating).to eq 5
+    end
+  end
+
   describe '#category_name' do
     it 'returns video category name' do
       category = Fabricate(:category)

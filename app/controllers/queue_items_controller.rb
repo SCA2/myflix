@@ -17,13 +17,13 @@ class QueueItemsController < ApplicationController
   end
 
   def update_queue
-    ActiveRecord::Base.transaction do
-      if current_user.update_queue(queue_params)
+    begin
+      ActiveRecord::Base.transaction do
+        current_user.update_queue(queue_params)
         current_user.normalize_order
-      else
-        flash[:error] = "Invalid input"
-        raise ActiveRecord::Rollback
       end
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound
+      flash[:error] = "Invalid input"
     end
     redirect_to my_queue_path
   end

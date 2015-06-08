@@ -18,16 +18,16 @@ class QueueItem < ActiveRecord::Base
     review.rating if review
   end
 
-  def rating=(rating)
-    if rating
-      return review.update(rating: rating)
+  def rating=(new_rating)
+    if review
+      review.update(rating: new_rating, skip_rating_validation: true)
     else
-      return create(:review, body: "Coming soon!", rating: rating)
+      Review.create(user: user, video: video, skip_body_validation: true, rating: new_rating)
     end
   end
 
   def review
-    review = Review.find_by(user_id: user.id, video_id: video.id)
+    @review ||= Review.find_by(user_id: user.id, video_id: video.id)
   end
 
 end

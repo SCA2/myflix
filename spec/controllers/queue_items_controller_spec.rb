@@ -66,23 +66,23 @@ describe QueueItemsController do
 
     describe 'POST update' do
 
-      let(:item_1) { Fabricate(:queue_item, user: @user, order: 1) }
-      let(:item_2) { Fabricate(:queue_item, user: @user, order: 2) }
+      let(:item_1) { Fabricate(:queue_item, user: @user, video: video_1, order: 1) }
+      let(:item_2) { Fabricate(:queue_item, user: @user, video: video_2, order: 2) }
 
       context 'valid data' do
 
         it 'redirects to queue items index page' do
-          post :update_queue, queue_item: {item_1.id => {order: 2}, item_2.id =>{order: 1}}
+          post :update_queue, queue_items: [{id: item_1.id, order: 2, rating: 1}, {id: item_2.id, order: 1, rating: 5}]
           expect(response).to redirect_to my_queue_path
         end
 
         it 'puts queue items in order' do
-          post :update_queue, queue_item: {item_1.id => {order: 2}, item_2.id =>{order: 1}}
+          post :update_queue, queue_items: [{id: item_1.id, order: 2, rating: 1}, {id: item_2.id, order: 1, rating: 5}]
           expect(@user.queue_items).to eq([item_2, item_1])
         end
 
         it 'starts ordering from 1' do
-          post :update_queue, queue_item: {item_1.id => {order: 4}, item_2.id =>{order: 3}}
+          post :update_queue, queue_items: [{id: item_1.id, order: 4, rating: 1}, {id: item_2.id, order: 3, rating: 5}]
           expect(@user.queue_items.first.order).to eq(1)
           expect(@user.queue_items.last.order).to eq(2)
         end
@@ -90,17 +90,17 @@ describe QueueItemsController do
 
       context 'invalid data' do
         it 'redirects to my_queue_path' do
-          post :update_queue, queue_item: {item_1.id => {order: 2.5}, item_2.id =>{order: 1}}
+          post :update_queue, queue_items: [{id: item_1.id, order: 2.5, rating: 1}, {id: item_2.id, order: 1, rating: 5}]
           expect(response).to redirect_to my_queue_path
         end
 
         it 'sets the flash error message' do
-          post :update_queue, queue_item: {item_1.id => {order: 2.5}, item_2.id =>{order: 1}}
+          post :update_queue, queue_items: [{id: item_1.id, order: 2.5, rating: 1}, {id: item_2.id, order: 1, rating: 5}]
           expect(flash[:error]).to be_present
         end
 
         it 'does not change existing queue items' do
-          post :update_queue, queue_item: {item_1.id => {order: 3}, item_2.id =>{order: 2.1}}
+          post :update_queue, queue_items: [{id: item_1.id, order: 3, rating: 1}, {id: item_2.id, order: 2.1, rating: 5}]
           expect(item_1.reload.order).to eq 1
         end
       end
@@ -109,7 +109,7 @@ describe QueueItemsController do
         let(:user_2) { Fabricate(:user) }
         let(:item_2) { Fabricate(:queue_item, user: user_2, order: 2)}
         it 'does not change existing queue items' do
-          post :update_queue, queue_item: {item_1.id => {order: 3}, item_2.id =>{order: 1}}
+          post :update_queue, queue_items: [{id: item_1.id, order: 3, rating: 1}, {id: item_2.id, order: 1, rating: 5}]
           expect(item_1.reload.order).to eq 1
           expect(item_2.reload.order).to eq 2
         end

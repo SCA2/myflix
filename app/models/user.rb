@@ -1,8 +1,10 @@
 class User < ActiveRecord::Base
   has_many  :reviews
-  has_many  :queue_items, -> { order :order }
+  has_many  :queue_items, -> { order(order: :asc) }
+  
   validates_uniqueness_of :email
   validates_presence_of :email, :name
+  
   has_secure_password
 
   def normalize_order
@@ -18,11 +20,10 @@ class User < ActiveRecord::Base
   def update_queue(params)
     params.each do |param|
       queue_item = queue_items.find(param[:id])
-      return false unless queue_item.user == self
-      return false unless queue_item.update(order: param[:order])
-      return false unless queue_item.update_rating(param[:rating])
+      queue_item.user == self
+      queue_item.update!(order: param[:order])
+      queue_item.rating = param[:rating]
     end
-    true
   end
 
 end
