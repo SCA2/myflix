@@ -1,12 +1,10 @@
 require 'spec_helper'
 
 describe QueueItemsController do
+
   context 'authenticated user' do
 
-    before do
-      @user = Fabricate(:user)
-      controller.sign_in(@user)
-    end
+    before { set_current_user }
 
     describe 'GET index' do
       it 'sets @queue_items to current_user queue' do
@@ -29,12 +27,12 @@ describe QueueItemsController do
 
       it 'associates video with new queue_item' do
         post :create, queue_item: {user_id: @user, video_id: video_1}
-        expect(QueueItem.last.video).to eq video_1
+        expect(QueueItem.first.video).to eq video_1
       end
 
       it 'associates user with new queue_item' do
         post :create, queue_item: {user_id: @user, video_id: video_1}
-        expect(QueueItem.last.user).to eq @user
+        expect(QueueItem.first.user).to eq @user
       end
 
       it 'puts new queue_item last in order' do
@@ -154,30 +152,26 @@ describe QueueItemsController do
 
   context 'unauthenticated user' do
     describe 'GET index' do
-      it 'redirects to sign_in_path' do
-        get :index
-        expect(response).to redirect_to sign_in_path
+      it_behaves_like 'requires sign in' do
+        let(:action) { get :index }
       end
     end
 
     describe 'POST create' do
-      it 'redirects to sign_in_path' do
-        post :create
-        expect(response).to redirect_to sign_in_path
+      it_behaves_like 'requires sign in' do
+        let(:action) { post :create }
       end
     end
 
     describe 'POST update_queue' do
-      it 'redirects to sign_in_path' do
-        post :update_queue
-        expect(response).to redirect_to sign_in_path
+      it_behaves_like 'requires sign in' do
+        let(:action) { post :update_queue }
       end
     end
 
     describe 'DELETE destroy' do
-      it 'redirects to sign_in_path' do
-        delete :destroy, id: 0
-        expect(response).to redirect_to sign_in_path
+      it_behaves_like 'requires sign in' do
+        let(:action) { delete :destroy, id: 0 }
       end
     end
   end
