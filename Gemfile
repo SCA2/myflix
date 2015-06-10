@@ -21,7 +21,7 @@ end
 group :development, :test do
   gem 'pry'
   gem 'pry-nav'
-  gem 'pry-rails'
+  # gem 'pry-rails'
 end
 
 group :test do
@@ -30,6 +30,8 @@ group :test do
   gem 'rspec-rails', '2.99'
   gem 'database_cleaner', '1.2.0'
   gem 'shoulda-matchers', require: false
+  gem 'capybara'
+  gem 'launchy'
 end
 
 group :production do

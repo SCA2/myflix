@@ -26,4 +26,8 @@ class User < ActiveRecord::Base
     end
   end
 
+  def in_queue?(video)
+    queue_items.any? { |i| i.video == video }
+  end
+
 end
