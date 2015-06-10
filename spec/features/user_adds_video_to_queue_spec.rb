@@ -16,7 +16,7 @@ feature 'user interacts with the queue' do
     add_videos_to_queue(videos)
     reorder_queue(videos)
     update_queue
-    check_queue(videos)
+    verify_queue(videos)
 
   end
 
@@ -25,20 +25,23 @@ feature 'user interacts with the queue' do
   end
 
   def add_videos_to_queue(videos)
-    videos.each {|video| add_video_to_queue(video) }
+    videos.each do |video|
+      add_video_to_queue(video)
+      verify_hidden_button(video)
+    end
   end
 
   def add_video_to_queue(video)
     expect(page.current_path).to eq "/home"
     find("a[href='/videos/#{video.id}']").click
-
     expect(page.current_path).to eq "/videos/#{video.id}"
     click_link "+ My Queue"
-
     expect(page.current_path).to eq "/queue_items"
     expect(page).to have_content "#{video.title}"
+  end
+  
+  def verify_hidden_button(video)
     find("a[href='/videos/#{video.id}']").click
-
     expect(page.current_path).to eq "/videos/#{video.id}"
     expect(page).not_to have_content "+ My Queue"
     find("a[href='/home']").click
@@ -48,14 +51,13 @@ feature 'user interacts with the queue' do
     find("a[href='/my_queue']").click
     expect(page.current_path).to eq "/my_queue"
     inputs = page.all("input#queue_items__order")
-    queue = page.all("a[href^='/videos/']")
     
     inputs[0].set 2
     inputs[1].set 3 
     inputs[2].set 1
   end
 
-  def check_queue(videos)
+  def verify_queue(videos)
     inputs = page.all("input#queue_items__order")
     queue = page.all("a[href^='/videos/']")
 
