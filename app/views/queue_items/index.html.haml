@@ -4,28 +4,24 @@
       %article
         %header
           %h2 My Queue
-        %table.table
-          %thead
-            %tr
-              %th(width="10%") List Order
-              %th(width="30%") Video Title
-              %th(width="10%") Play
-              %th(width="20%") Rating
-              %th(width="15%") Genre
-              %th(width="15%") Remove
-          %tbody
-            -@queue_items.each do |queue_item|
+        =form_tag(my_queue_path) do
+          %table.table
+            %thead
               %tr
-                %td
-                  = queue_item.order
-                %td
-                  = link_to queue_item.video_title, queue_item.video
-                %td
-                  = button_to "Play", nil, class: "btn btn-default"
-                %td
-                  = queue_item.rating
-                %td
-                  = link_to queue_item.category_name, queue_item.category
-                %td
-                  = link_to "", queue_item, method: :delete, class: "glyphicon glyphicon-remove"
-        = button_to "Update Instant Queue", nil, class: "btn btn-default"
+                %th(width="10%") List Order
+                %th(width="30%") Video Title
+                %th(width="10%") Play
+                %th(width="20%") Rating
+                %th(width="15%") Genre
+                %th(width="15%") Remove
+            %tbody
+              -@queue_items.each do |item|
+                %tr
+                  = hidden_field_tag "queue_items[][id]", item.id
+                  %td= text_field_tag "queue_items[][order]", item.order, class: "form-control"
+                  %td= link_to item.video_title, item.video
+                  %td= button_to "Play", nil, class: "btn btn-default"
+                  %td= select_tag "queue_items[][rating]", review_options(item.rating), include_blank: true, class: "form-control"
+                  %td= link_to item.category_name, item.category
+                  %td= link_to "", item, method: :delete, class: "glyphicon glyphicon-remove"
+          =submit_tag "Update Instant Queue", class: "btn btn-default"

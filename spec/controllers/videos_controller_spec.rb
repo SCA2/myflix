@@ -4,30 +4,29 @@ describe VideosController do
 
   context "with authenticated user" do
 
-    before(:each) do
-      user = Fabricate(:user)
-      controller.sign_in(user)
-    end
+    before { set_current_user }
 
     describe "GET index" do
       it "sets @categories variable" do
-        c = Fabricate(:category)
+        category = Fabricate(:category)
         get :index
-        expect(assigns(:categories)).to eq [c]
+        expect(assigns(:categories)).to eq [category]
       end
     end
 
     describe "GET show" do
-      let(:v)   { Fabricate(:video) }
-      let(:r1)  { Fabricate(:review, video: v) }
-      let(:r2)  { Fabricate(:review, video: v) }
+      let(:video)   { Fabricate(:video) }
+      let(:review_1)  { Fabricate(:review, video: video) }
+      let(:review_2)  { Fabricate(:review, video: video) }
+
       it "sets @video variable" do
-        get :show, id: v.id
-        expect(assigns(:video)).to eq v
+        get :show, id: video.id
+        expect(assigns(:video)).to eq video
       end
+
       it "sets @reviews variable" do
-        get :show, id: v.id
-        expect(assigns(:reviews)).to include r1, r2
+        get :show, id: video.id
+        expect(assigns(:reviews)).to include review_1, review_2
       end
     end
 
@@ -45,23 +44,20 @@ describe VideosController do
   
   context "with unauthenticated user" do
     describe "GET index" do
-      it "redirects to sign_in path" do
-        get :index
-        expect(response).to redirect_to sign_in_path
+      it_behaves_like 'requires sign in' do
+        let(:action) { get :index }
       end
     end
 
     describe "GET show" do
-      it "redirects to sign_in path" do
-        get :show, id: 0
-        expect(response).to redirect_to sign_in_path
+      it_behaves_like 'requires sign in' do
+        let(:action) { get :show, id: 0 }
       end
     end
 
     describe "GET search" do
-      it "redirects to sign_in path" do
-        get :search, query: nil
-        expect(response).to redirect_to sign_in_path
+      it_behaves_like 'requires sign in' do
+        let(:action) { get :search, query: nil }
       end
     end
   end
