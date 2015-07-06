@@ -43,7 +43,7 @@ feature 'user interacts with the queue' do
   def verify_hidden_button(video)
     find("a[href='/videos/#{video.id}']").click
     expect(page.current_path).to eq "/videos/#{video.id}"
-    expect(page).not_to have_content "+ My Queue"
+    expect(page).to have_no_content "+ My Queue"
     find("a[href='/home']").click
   end
 

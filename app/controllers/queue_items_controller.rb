@@ -7,7 +7,7 @@ class QueueItemsController < ApplicationController
   end
 
   def create
-    queue_item = QueueItem.new(item_params)
+    queue_item = current_user.queue_items.build(item_params)
     if queue_item.save
       flash[:notice] = "Video added to your queue!"
     else
@@ -43,8 +43,8 @@ class QueueItemsController < ApplicationController
   private
 
   def item_params
-    p = params.require(:queue_item).permit(:user_id, :video_id)
-    p.merge(order: current_user.next_item_order)
+    params.require(:queue_item).
+      permit(:video_id).merge!(order: current_user.next_item_order)
   end
 
   def queue_params

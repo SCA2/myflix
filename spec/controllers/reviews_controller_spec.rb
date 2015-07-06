@@ -7,7 +7,8 @@ describe ReviewsController do
 
     context 'with authenticated user' do
 
-      before { set_current_user }
+      let(:user)  { Fabricate(:user) }
+      before      { set_current_user(user) }
 
       describe 'with valid data' do
         before do
@@ -25,7 +26,7 @@ describe ReviewsController do
         end
 
         it 'creates authenticated user association' do
-          expect(Review.first).to eq @user.reviews.first
+          expect(Review.first).to eq user.reviews.first
         end
 
         it 'redirects to video show page' do
