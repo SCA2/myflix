@@ -19,7 +19,7 @@ Myflix::Application.routes.draw do
   resources :categories, only: :show
   resources :queue_items, only: [:index, :create, :destroy]
 
-  resources :users, only: [:new, :create, :update] do
+  resources :users, only: [:new, :show, :create, :update] do
     collection do
       get :front,     to: "users#front"
     end

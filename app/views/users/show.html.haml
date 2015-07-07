@@ -1,0 +1,37 @@
+%section.user.container
+  .row
+    .col-sm-10.col-sm-offset-1
+      %article
+        %header
+          %img(src="#{@user.gravatar}")
+          %h2= "#{@user.name}'s video collections (#{@queue.count})"
+          %button.btn.btn-default Follow
+        - if @queue.count > 0
+          %table.table
+            %thead
+              %tr
+                %th(width="30%") Video Title
+                %th(width="15%") Genre
+            %tbody
+              - @queue.each do |item|
+                %tr
+                  %td
+                    = link_to item.video_title, item.video
+                  %td
+                    = link_to item.category_name, item.category
+
+%section.user_reviews.container
+  .row
+    .col-sm-10.col-sm-offset-1
+      %header
+        %h3 #{@user.name}'s Reviews (#{@reviews.count})
+      %ul
+        - @reviews.each do |review|
+          %article.review
+            %li.row
+              .col-sm-2
+                %p
+                  = link_to review.video_title, review.video
+                %col Rating: #{review.rating} / 5
+              .col-sm-8
+                %p= review.body

@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  has_many  :reviews
+  has_many  :reviews, -> { order created_at: :desc }
   has_many  :queue_items, -> { order(order: :asc) }
   
   validates_uniqueness_of :email
@@ -28,6 +28,12 @@ class User < ActiveRecord::Base
 
   def in_queue?(video)
     queue_items.any? { |i| i.video == video }
+  end
+
+  def gravatar
+    url = "http://www.gravatar.com/avatar/"
+    url += Digest::MD5.hexdigest(email.downcase)
+    url += "?s=40"  #size = 40px?
   end
 
 end
