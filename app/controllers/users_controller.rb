@@ -8,9 +8,9 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = current_user
-    @reviews = current_user.reviews
-    @queue = current_user.queue_items
+    @user = User.find(params[:id])
+    @reviews = @user.reviews
+    @queue = @user.queue_items
   end
 
   def create

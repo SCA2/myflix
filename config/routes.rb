@@ -18,6 +18,7 @@ Myflix::Application.routes.draw do
 
   resources :categories, only: :show
   resources :queue_items, only: [:index, :create, :destroy]
+  resources :influences, only: [:index, :create, :destroy]
 
   resources :users, only: [:new, :show, :create, :update] do
     collection do

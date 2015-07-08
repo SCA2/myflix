@@ -1,6 +1,8 @@
 class User < ActiveRecord::Base
-  has_many  :reviews, -> { order created_at: :desc }
-  has_many  :queue_items, -> { order(order: :asc) }
+  has_many :reviews, -> { order created_at: :desc }
+  has_many :queue_items, -> { order(order: :asc) }
+  has_many :influences
+  has_many :leaders, through: :influences
   
   validates_uniqueness_of :email
   validates_presence_of :email, :name

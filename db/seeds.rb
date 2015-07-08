@@ -82,7 +82,19 @@ Video.create!([
   }
 ])
 
-tester = User.create!(email: 'tester@example.com', name: 'Joe Tester', password: 'password')
+tester_1 = User.create!(email: 'tester_1@example.com', name: 'Alice Tester', password: 'password')
+tester_2 = User.create!(email: 'tester_2@example.com', name: 'Bob Tester', password: 'password')
+tester_3 = User.create!(email: 'tester_3@example.com', name: 'Carl Tester', password: 'password')
+tester_4 = User.create!(email: 'tester_4@example.com', name: 'Diane Tester', password: 'password')
+tester_5 = User.create!(email: 'tester_5@example.com', name: 'Eric Tester', password: 'password')
 
-Review.create!(user: tester, video: Video.first, rating: 1, body: "This is a terrible movie." )
-Review.create!(user: tester, video: Video.first, rating: 5, body: "This is an excellent movie." )
+Review.create!(user: tester_1, video: Video.first, rating: 1, body: "This is a terrible movie." )
+Review.create!(user: tester_1, video: Video.first, rating: 5, body: "This is an excellent movie." )
+Review.create!(user: tester_2, video: Video.second, rating: 1, body: "This is a terrible movie." )
+Review.create!(user: tester_2, video: Video.second, rating: 5, body: "This is an excellent movie." )
+Review.create!(user: tester_3, video: Video.third, rating: 1, body: "This is a terrible movie." )
+Review.create!(user: tester_3, video: Video.third, rating: 5, body: "This is an excellent movie." )
+Review.create!(user: tester_4, video: Video.fourth, rating: 1, body: "This is a terrible movie." )
+Review.create!(user: tester_4, video: Video.fourth, rating: 5, body: "This is an excellent movie." )
+Review.create!(user: tester_5, video: Video.fifth, rating: 1, body: "This is a terrible movie." )
+Review.create!(user: tester_5, video: Video.fifth, rating: 5, body: "This is an excellent movie." )

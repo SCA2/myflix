@@ -5,7 +5,8 @@
         %header
           %img(src="#{@user.gravatar}")
           %h2= "#{@user.name}'s video collections (#{@queue.count})"
-          %button.btn.btn-default Follow
+          - if @user != current_user
+            %button.btn.btn-default= link_to "Follow", influences_path(id: @user), method: :post
         - if @queue.count > 0
           %table.table
             %thead

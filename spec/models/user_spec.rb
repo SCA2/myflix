@@ -8,6 +8,8 @@ describe User do
   it { should validate_presence_of(:password) }
   it { should have_many(:queue_items).order(:order) }
   it { should have_many(:reviews).order(created_at: :desc) }
+  it { should have_many(:influences) }
+  it { should have_many(:leaders).class_name('User') }
 
   describe '#in_queue?' do
     let(:user)        { Fabricate(:user) }
