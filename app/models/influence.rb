@@ -4,4 +4,13 @@ class Influence < ActiveRecord::Base
 
   validates :leader, :follower, presence: true
   validates :leader, uniqueness: { scope: :follower }
+
+  validate  :leader_neq_follower
+
+  def leader_neq_follower
+    if leader == follower
+      errors.add(:base, "can't follow yourself")
+    end
+  end
+
 end

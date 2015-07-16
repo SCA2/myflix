@@ -40,6 +40,22 @@ describe InfluencesController do
         post :create, id: leader.id
         expect(user.leaders).to eq [leader]
       end
+
+      it "can't follow same leader more than once" do
+        post :create, id: leader.id
+        post :create, id: leader.id
+        expect(Influence.count).to eq 1
+      end
+
+      it "can't follow yourself" do
+        post :create, id: user.id
+        expect(Influence.count).to eq 0
+      end
+
+      it "redirects to people_path" do
+        post :create, id: leader.id
+        expect(response).to redirect_to people_path
+      end
     end
 
     describe "DELETE destroy" do

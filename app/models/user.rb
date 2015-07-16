@@ -40,4 +40,8 @@ class User < ActiveRecord::Base
     url += "?s=40"  #size = 40px?
   end
 
+  def can_follow?(user)
+    user != self && !leaders.include?(user)
+  end
+
 end

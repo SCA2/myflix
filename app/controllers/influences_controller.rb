@@ -7,7 +7,7 @@ class InfluencesController < ApplicationController
   end
 
   def create
-    @influence = current_user.leader_influences.build(leader_id: params[:id])
+    @influence = current_user.leader_influences.build(leader_id: params.require(:id))
     if @influence.save
       flash[:notice] = "Following #{@influence.leader.name}"
     else
@@ -23,9 +23,4 @@ class InfluencesController < ApplicationController
     redirect_to people_path
   end
 
-  private
-
-  def leader_params
-    params.require(:id).merge!()
-  end
 end
