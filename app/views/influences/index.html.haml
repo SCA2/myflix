@@ -15,7 +15,7 @@
             %img(src="#{influence.leader.gravatar}")
             = link_to influence.leader.name, influence.leader
           %td.extra-padding= influence.leader.queue_items.count
-          %td.extra-padding= Influence.where(leader_id: influence.leader.id).count
+          %td.extra-padding= influence.leader.followers.count
           %td.extra-padding
             = link_to influence, method: :delete do
               %i.glyphicon.glyphicon-remove

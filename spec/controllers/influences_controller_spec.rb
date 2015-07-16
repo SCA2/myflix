@@ -26,11 +26,12 @@ describe InfluencesController do
     before        { set_current_user }
     let(:user)    { controller.current_user }
     let(:leader)  { Fabricate(:user) }
+    let(:user_2)  { Fabricate(:user) }
 
     describe "GET index" do
-      it "assigns current_user.influences to @influences" do
+      it "assigns current_user.leader_influences to @influences" do
         get :index
-        expect(assigns(:influences)).to eq user.influences
+        expect(assigns(:influences)).to eq user.leader_influences
       end
     end
 
@@ -42,10 +43,23 @@ describe InfluencesController do
     end
 
     describe "DELETE destroy" do
+      it "redirects to the people page" do
+        user.leader_influences.create!(leader_id: leader.id)
+        delete :destroy, id: user.leader_influences.last
+        expect(response).to redirect_to people_path
+      end
+        
       it "deletes influence of leader from user.leaders" do
-        user.influences.create!(leader_id: leader.id)
-        delete :destroy, id: user.influences.last
+        user.leader_influences.create!(leader_id: leader.id)
+        delete :destroy, id: user.leader_influences.last
         expect(user.leaders).to eq []
+      end
+
+      it "only deletes influence belonging to current user" do
+        user_2.leader_influences.create!(leader_id: leader.id)
+        expect {
+          delete :destroy, id: user_2.leader_influences.last
+        }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

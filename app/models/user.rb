@@ -1,8 +1,10 @@
 class User < ActiveRecord::Base
   has_many :reviews, -> { order created_at: :desc }
   has_many :queue_items, -> { order(order: :asc) }
-  has_many :influences
-  has_many :leaders, through: :influences
+  has_many :leader_influences, foreign_key: :follower_id, class_name: "Influence", dependent: :destroy
+  has_many :follower_influences, foreign_key: :leader_id, class_name: "Influence", dependent: :destroy
+  has_many :leaders, through: :leader_influences, source: :leader
+  has_many :followers, through: :follower_influences, source: :follower
   
   validates_uniqueness_of :email
   validates_presence_of :email, :name
