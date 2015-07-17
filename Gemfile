@@ -14,14 +14,14 @@ gem 'pg'
 
 group :development do
   gem 'thin'
-  gem "better_errors"
-  gem "binding_of_caller"
+  gem 'better_errors'
+  gem 'binding_of_caller'
+  gem 'letter_opener'
 end
 
 group :development, :test do
   gem 'pry'
   gem 'pry-nav'
-  # gem 'pry-rails'
 end
 
 group :test do
