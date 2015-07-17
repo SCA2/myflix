@@ -1,6 +1,10 @@
 class User < ActiveRecord::Base
-  has_many  :reviews
-  has_many  :queue_items, -> { order(order: :asc) }
+  has_many :reviews, -> { order created_at: :desc }
+  has_many :queue_items, -> { order(order: :asc) }
+  has_many :leader_influences, foreign_key: :follower_id, class_name: "Influence", dependent: :destroy
+  has_many :follower_influences, foreign_key: :leader_id, class_name: "Influence", dependent: :destroy
+  has_many :leaders, through: :leader_influences, source: :leader
+  has_many :followers, through: :follower_influences, source: :follower
   
   validates_uniqueness_of :email
   validates_presence_of :email, :name
@@ -28,6 +32,16 @@ class User < ActiveRecord::Base
 
   def in_queue?(video)
     queue_items.any? { |i| i.video == video }
+  end
+
+  def gravatar
+    url = "http://www.gravatar.com/avatar/"
+    url += Digest::MD5.hexdigest(email.downcase)
+    url += "?s=40"  #size = 40px?
+  end
+
+  def can_follow?(user)
+    user != self && !leaders.include?(user)
   end
 
 end

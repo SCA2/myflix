@@ -1,9 +1,16 @@
 class UsersController < ApplicationController
 
-  before_action :already_signed_up
+  before_action :already_signed_up, only: [:new, :create]
+  before_action :authorize, only: [:show]
 
   def new
     @user = User.new
+  end
+
+  def show
+    @user = User.find(params[:id])
+    @reviews = @user.reviews
+    @queue = @user.queue_items
   end
 
   def create

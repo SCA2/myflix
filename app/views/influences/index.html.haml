@@ -1,0 +1,21 @@
+%section.people
+  %header
+    %h2 People I Follow
+  %table.table
+    %thead
+      %tr
+        %th(width="30%")
+        %th(width="20%") Videos in Queue
+        %th(width="20%") Followers
+        %th(width="30%") Unfollow
+    %tbody
+      - @influences.each do |influence|
+        %tr
+          %td
+            %img(src="#{influence.leader.gravatar}")
+            = link_to influence.leader.name, influence.leader
+          %td.extra-padding= influence.leader.queue_items.count
+          %td.extra-padding= influence.leader.followers.count
+          %td.extra-padding
+            = link_to influence, method: :delete do
+              %i.glyphicon.glyphicon-remove

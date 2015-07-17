@@ -11,6 +11,12 @@ describe UsersController do
       end
     end
 
+    describe "GET show" do
+      it_behaves_like 'requires sign in' do
+        let(:action) { get :show, id: 0 }
+      end
+    end
+
     describe "POST create" do
 
       before { post :create, user: params }
@@ -63,6 +69,24 @@ describe UsersController do
         let(:action) { post :create }
       end
     end
+
+    describe "GET show" do
+      it "assigns @user to current user" do
+        get :show, id: controller.current_user.id
+        expect(assigns(:user)).to eq controller.current_user
+      end
+
+      it "assigns @reviews to current user reviews" do
+        get :show, id: controller.current_user.id
+        expect(assigns(:reviews)).to eq controller.current_user.reviews
+      end
+
+      it "assigns @queue to current user queue items" do
+        get :show, id: controller.current_user.id
+        expect(assigns(:queue)).to eq controller.current_user.queue_items
+      end
+    end
+
   end
 
 end
