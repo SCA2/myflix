@@ -13,7 +13,7 @@ gem 'jquery-rails'
 gem 'pg'
 
 group :development do
-  gem 'thin'
+  gem 'thin', '~> 1.6.3'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'letter_opener'
@@ -28,7 +28,7 @@ group :test do
   gem 'fabrication'
   gem 'faker'
   gem 'rspec-rails', '2.99'
-  gem 'database_cleaner', '1.2.0'
+  gem 'database_cleaner'
   gem 'shoulda-matchers', require: false
   gem 'capybara'
   gem 'launchy'
