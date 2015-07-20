@@ -57,4 +57,10 @@ class User < ActiveRecord::Base
     end until !User.exists?(column => self[column])
   end
 
+  def cleanup_password_reset
+    self.password_reset_token = nil
+    self.password_reset_sent_at = nil
+    save!
+  end
+
 end

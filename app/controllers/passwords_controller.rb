@@ -2,31 +2,39 @@ class PasswordsController < ApplicationController
 
   before_action :already_signed_in
 
-  def new
-    render 'forgot_password'
-  end
-
   def create
     user = User.find_by(email: params[:email])
-    user.send_password_reset if user
-    render 'confirm_email_sent'
+    if user
+      user.send_password_reset
+    else
+      flash[:error] = params[:email].blank? ? "Email can't be blank!" : "Unknown email address!"
+      redirect_to new_password_path
+    end
   end
 
   def edit
     @user = User.find_by(password_reset_token: params[:id])
-    render 'reset_password'
+    if !@user
+      redirect_to expired_token_path
+    elsif @user.password_reset_sent_at < 1.hour.ago
+      @user.cleanup_password_reset
+      redirect_to expired_token_path
+    end
   end
 
   def update
     user = User.find_by(password_reset_token: params[:id])
-    if user.password_reset_sent_at < 1.hour.ago
-      flash[:alert] = "Can't update that password!"
-      redirect_to home_path
+    if !user
+      redirect_to home_path      
+    elsif user.password_reset_sent_at < 1.hour.ago
+      user.cleanup_password_reset
+      redirect_to expired_token_path
     elsif user.update(password_params)
+      user.cleanup_password_reset
       flash[:notice] = "Password updated!  Please sign in below."
       redirect_to sign_in_path
     else
-      render :edit
+      redirect_to home_path
     end
   end
 

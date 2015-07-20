@@ -18,6 +18,7 @@ feature 'password reset' do
     fill_in "password", with: user.password
     click_button "Reset"
     expect(page.current_path).to eq "/sign_in"
+    expect(page).to have_content "updated"
   end
 end
 
