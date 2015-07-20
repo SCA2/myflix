@@ -57,9 +57,21 @@ describe PasswordsController do
       expect(response).to render_template :edit
     end
 
-    it 'redirects to expired token path if token is invalid' do
+    it 'redirects to expired token path if token invalid' do
       get :edit, email: user.email, id: ''
       expect(response).to redirect_to expired_token_path
+    end
+
+    it 'sets user.password_reset_token to nil if token expired' do
+      user.update!(password_reset_sent_at: 2.hours.ago)
+      get :edit, email: user.email, id: user.password_reset_token
+      expect(user.reload.password_reset_token).to eq nil
+    end
+
+    it 'sets user.password_reset_sent_at to nil if token expired' do
+      user.update!(password_reset_sent_at: 2.hours.ago)
+      get :edit, email: user.email, id: user.password_reset_token
+      expect(user.reload.password_reset_sent_at).to eq nil
     end
   end
 
@@ -78,15 +90,20 @@ describe PasswordsController do
       expect(response).to redirect_to sign_in_path
     end
 
+    it 'sets flash success message' do
+      patch :update, password: 'password', id: user.password_reset_token
+      expect(flash[:success]).to be_present
+    end
+
     it 'redirects to expired token path if token is expired' do
       user.update!(password_reset_sent_at: 2.hours.ago)
       patch :update, password: 'password', id: user.password_reset_token
       expect(response).to redirect_to expired_token_path
     end
 
-    it "redirects to home path if user can't be found" do
+    it "redirects to expired token path if user can't be found" do
       patch :update, password: 'password', id: ''
-      expect(response).to redirect_to home_path
+      expect(response).to redirect_to expired_token_path
     end
 
     it 'sets user.password_reset_token to nil' do

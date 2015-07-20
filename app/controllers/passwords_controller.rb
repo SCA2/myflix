@@ -14,9 +14,8 @@ class PasswordsController < ApplicationController
 
   def edit
     @user = User.find_by(password_reset_token: params[:id])
-    if !@user
-      redirect_to expired_token_path
-    elsif @user.password_reset_sent_at < 1.hour.ago
+    redirect_to expired_token_path and return unless @user
+    if @user.password_reset_sent_at < 1.hour.ago
       @user.cleanup_password_reset
       redirect_to expired_token_path
     end
@@ -24,18 +23,14 @@ class PasswordsController < ApplicationController
 
   def update
     user = User.find_by(password_reset_token: params[:id])
-    if !user
-      redirect_to home_path      
-    elsif user.password_reset_sent_at < 1.hour.ago
-      user.cleanup_password_reset
+    redirect_to expired_token_path and return unless user
+    if user.password_reset_sent_at < 1.hour.ago
       redirect_to expired_token_path
     elsif user.update(password_params)
-      user.cleanup_password_reset
-      flash[:notice] = "Password updated!  Please sign in below."
+      flash[:success] = "Password updated!  Please sign in below."
       redirect_to sign_in_path
-    else
-      redirect_to home_path
     end
+    user.cleanup_password_reset
   end
 
   private
