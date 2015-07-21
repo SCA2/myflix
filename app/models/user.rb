@@ -54,13 +54,15 @@ class User < ActiveRecord::Base
   def generate_token(column)
     begin
       self[column] = SecureRandom.urlsafe_base64
-    end until !User.exists?(column => self[column])
+    end until unique?(column)
+  end
+
+  def unique?(column)
+    !User.exists?(column => self[column])
   end
 
   def cleanup_password_reset
-    self.password_reset_token = nil
-    self.password_reset_sent_at = nil
-    save!
+    update!(password_reset_token: nil, password_reset_sent_at: nil)
   end
 
 end
