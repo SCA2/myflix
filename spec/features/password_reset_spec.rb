@@ -7,18 +7,24 @@ feature 'password reset' do
   scenario 'known user clicks forgot password link' do
     visit sign_in_path
     click_link "password"
-    expect(page.current_path).to eq "/passwords/new"
     fill_in "email", with: user.email
     click_button "Send"
-    expect(page.current_path).to eq "/passwords"
+
     expect(page).to have_content "instructions to reset"
     expect(last_email.to).to include user.email
-    visit edit_password_url(id: user.reload.password_reset_token)
+
+    open_email(user.email)
+    current_email.click_link "Click here"
     expect(page).to have_content "Reset Your Password"
-    fill_in "password", with: user.password
+
+    fill_in "password", with: 'new_password'
     click_button "Reset"
-    expect(page.current_path).to eq "/sign_in"
     expect(page).to have_content "updated"
+
+    fill_in "Email", with: user.email
+    fill_in "Password", with: 'new_password'
+    click_button "Sign in"
+    expect(page).to have_content "Welcome, #{user.name}"
   end
 end
 
