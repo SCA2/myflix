@@ -60,4 +60,8 @@ RSpec.configure do |config|
   # The different available types are documented in the features, such as in
   # https://relishapp.com/rspec/rspec-rails/v/3-0/docs
   config.infer_spec_type_from_file_location!
+
+  # find in spec/support/macros.rb
+  config.before(:each) { reset_email }
+
 end

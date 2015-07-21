@@ -14,3 +14,11 @@ end
 def click_video_on_home_page(video)
   find("a[href='/videos/#{video.id}']").click
 end
+
+def last_email
+  ActionMailer::Base.deliveries.last
+end
+
+def reset_email
+  ActionMailer::Base.deliveries = []
+end

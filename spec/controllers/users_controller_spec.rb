@@ -19,7 +19,8 @@ describe UsersController do
 
     describe "POST create" do
 
-      before { post :create, user: params }
+      before  { post :create, user: params }
+      after   { ActionMailer::Base.deliveries.clear }
 
       context "with valid input" do
 
@@ -32,6 +33,23 @@ describe UsersController do
 
         it "redirects to home path" do
           expect(response).to redirect_to home_path
+        end
+
+        context "sending email" do
+
+          it "sends email" do
+            expect(ActionMailer::Base.deliveries).to_not be_empty
+          end
+
+          it "sends to correct recipient" do
+            message = ActionMailer::Base.deliveries.last
+            expect(message.to.first).to eq params[:email]
+          end
+
+          it "has correct content" do
+            message = ActionMailer::Base.deliveries.last
+            expect(message.body).to include(params[:name])
+          end
         end
       end
 
@@ -49,6 +67,10 @@ describe UsersController do
 
         it "creates empty @user variable" do
           expect(assigns(:user)).to be_a_new(User)
+        end
+
+        it "does not send email" do
+          expect(ActionMailer::Base.deliveries).to be_empty
         end
       end
     end
