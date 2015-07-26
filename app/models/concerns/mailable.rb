@@ -22,7 +22,7 @@ module Mailable
     generate_token("#{column}_token")
     eval "self.#{column}_sent_at = Time.zone.now"
     save!
-    eval "UserMailer.#{column}(self).deliver"
+    eval "UserMailer.delay.#{column}(self)"
   end
 
   def method_match?(symbol)
