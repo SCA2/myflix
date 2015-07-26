@@ -66,3 +66,8 @@ RSpec.configure do |config|
   config.before(:each) { reset_email }
 
 end
+
+Capybara.configure do |config|
+  config.server_port = 3000
+  config.app_host   = 'http://localhost:3000'
+end

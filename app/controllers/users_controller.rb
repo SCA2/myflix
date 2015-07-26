@@ -4,7 +4,10 @@ class UsersController < ApplicationController
   before_action :authorize, only: [:show]
 
   def new
-    @user = User.new
+    @user = User.new(user_params)
+    @token = params[:user][:id]
+    redirect_to expired_token_path unless
+      @token && Invitation.find_by(invitation_token: @token)
   end
 
   def show
@@ -15,7 +18,10 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
+    @invitation = Invitation.find_by(token_params)
+    @friend = @invitation.user if @invitation
     if @user.save
+      mutual_friends if @friend
       UserMailer.welcome(@user).deliver
       sign_in @user
       flash[:success] = "Signed up!"
@@ -34,4 +40,15 @@ class UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:name, :email, :password)
   end
+
+  def token_params
+    params.require(:user).permit(:invitation_token)
+  end
+
+  def mutual_friends
+    @user.follow(@friend)
+    @friend.follow(@user)
+    @invitation.destroy
+  end
+
 end

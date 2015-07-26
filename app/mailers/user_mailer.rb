@@ -11,4 +11,10 @@ class UserMailer < ActionMailer::Base
     mail from: 'admin@myflix.com', to: @user.email, subject: 'MyFlix Password Reset'
   end
 
+  def invitation(invitee)
+    @inviter = invitee.user
+    @invitee = invitee
+    mail from: @inviter.email, to: @invitee.email, subject: 'Want to Join MyFlix?'
+  end
+
 end

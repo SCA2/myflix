@@ -1,13 +1,17 @@
 class User < ActiveRecord::Base
+
+  include Tokenable
+
+  has_many :invitations
   has_many :reviews, -> { order created_at: :desc }
   has_many :queue_items, -> { order(order: :asc) }
   has_many :leader_influences, foreign_key: :follower_id, class_name: "Influence", dependent: :destroy
   has_many :follower_influences, foreign_key: :leader_id, class_name: "Influence", dependent: :destroy
   has_many :leaders, through: :leader_influences, source: :leader
   has_many :followers, through: :follower_influences, source: :follower
-  
-  validates_uniqueness_of :email
-  validates_presence_of :email, :name
+
+  validates :email, _uniqueness: true
+  validates :email, :name, presence: true
   
   has_secure_password
 
@@ -44,21 +48,12 @@ class User < ActiveRecord::Base
     user != self && !leaders.include?(user)
   end
 
-  def send_password_reset
-    generate_token(:password_reset_token)
-    self.password_reset_sent_at = Time.zone.now
-    save!
-    UserMailer.password_reset(self).deliver
+  def follows?(user)
+    leaders.include?(user)
   end
 
-  def generate_token(column)
-    begin
-      self[column] = SecureRandom.urlsafe_base64
-    end until unique?(column)
-  end
-
-  def unique?(column)
-    !User.exists?(column => self[column])
+  def follow(user)
+    leader_influences.create(leader_id: user.id) if can_follow?(user)
   end
 
   def cleanup_password_reset
