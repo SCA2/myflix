@@ -1,6 +1,6 @@
 class Invitation < ActiveRecord::Base
 
-  include Tokenable
+  include Mailable
 
   belongs_to :user
 

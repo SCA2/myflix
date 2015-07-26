@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
 
-  include Tokenable
+  include Mailable
 
   has_many :invitations
   has_many :reviews, -> { order created_at: :desc }

@@ -15,20 +15,21 @@ shared_examples 'already signed in' do
 end
 
 shared_examples 'tokenable' do
-  it 'generates a unique token each time' do
-    send_object_1
-    # last_token = token
-    send_object_2
-    expect(token_1).to_not eq(token_2)
+  it 'generates a token' do
+    object.generate_token(column)
+    expect(object[column]).to be_present
   end
 
-  # it 'saves the time the object reset was sent' do
-  #   send_object
-  #   expect(sent_at).to be_present
-  # end
+  it 'does not save token' do
+    object.generate_token(column)
+    expect(object.reload[column]).to be_nil
+  end
 
-  # it 'delivers email to invitee' do
-  #   send_object
-  #   expect(last_email.to).to include(object.email)
-  # end
+  it 'guarantees token is unique' do
+    object.generate_token(column)
+    token_1 = object[column]
+    object.generate_token(column)
+    token_2 = object[column]
+    expect(token_1).to_not eq(token_2)
+  end
 end
