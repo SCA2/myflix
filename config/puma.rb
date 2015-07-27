@@ -14,6 +14,6 @@ on_worker_boot do
   ActiveRecord::Base.establish_connection
 
   Sidekiq.configure_client do |config|
-    config.redis = { size: 5, timeout: 1, url: ENV["REDISTOGO_URL"] }
+    config.redis = { size: 1, url: ENV["REDISTOGO_URL"] }
   end
 end
