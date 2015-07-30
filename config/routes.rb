@@ -28,7 +28,9 @@ Myflix::Application.routes.draw do
   end
 
   resources :passwords, only: [:new, :create, :edit, :update]
-  get :expired_token, to: 'passwords#expired_token'
+  get :expired_token, to: 'pages#expired_token'
+
+  resources :invitations, only: [:new, :create]
 
   get 'ui(/:action)', controller: 'ui'
 

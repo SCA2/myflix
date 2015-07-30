@@ -12,6 +12,7 @@ describe User do
   it { should have_many(:follower_influences) }
   it { should have_many(:leaders).class_name('User') }
   it { should have_many(:followers).class_name('User') }
+  it { should have_many(:invitations) }
 
   describe '#in_queue?' do
     let(:user)        { Fabricate(:user) }
@@ -40,16 +41,14 @@ describe User do
     end
   end
 
+  it_behaves_like 'tokenable' do
+    let(:object)  { Fabricate(:user) }
+    let(:column)  { 'password_reset_token' }
+  end
+
   describe '#send_password_reset' do
 
     let(:user) { Fabricate(:user) }
-
-    it 'generates a unique password_reset_token each time' do
-      user.send_password_reset
-      last_token = user.password_reset_token
-      user.send_password_reset
-      expect(user.password_reset_token).to_not eq(last_token)
-    end
 
     it 'saves the time the password reset was sent' do
       user.send_password_reset
@@ -76,6 +75,48 @@ describe User do
       user.send_password_reset
       user.cleanup_password_reset
       expect(user.reload.password_reset_sent_at).to be_nil
+    end
+  end
+
+  describe "#can_follow?" do
+    
+    let(:user_1) { Fabricate(:user) }
+    let(:user_2) { Fabricate(:user) }
+
+    it "is able to follow another user" do
+      expect(user_1.can_follow?(user_2)).to be true
+    end
+
+    it "is unable to follow self" do
+      expect(user_1.can_follow?(user_1)).to be false
+    end
+  end
+
+  describe "#follows?" do
+    
+    let(:user_1) { Fabricate(:user) }
+    let(:user_2) { Fabricate(:user) }
+
+    it "does self follow another user" do
+      expect(user_1.follows?(user_2)).to be false
+      user_1.follow(user_2)
+      expect(user_1.follows?(user_2)).to be true
+    end
+  end
+
+  describe "#follow" do
+    
+    let(:user_1) { Fabricate(:user) }
+    let(:user_2) { Fabricate(:user) }
+
+    it "follow another user" do
+      user_1.follow(user_2)
+      expect(user_1.follows?(user_2)).to be true
+    end
+
+    it "cannot follow self" do
+      user_1.follow(user_1)
+      expect(user_1.follows?(user_1)).to be false
     end
   end
 

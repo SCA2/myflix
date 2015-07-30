@@ -1,0 +1,6 @@
+!!! 5
+%html(lang="en-US")
+  %body
+    %p Hey #{@invitee.name},
+    %p #{@invitee.message}
+    %p #{link_to 'Join MyFlix', register_url(user: {id: @invitee.invitation_token, email: @invitee.email})} and live happily ever after!

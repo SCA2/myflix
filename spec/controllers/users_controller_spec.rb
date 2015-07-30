@@ -4,10 +4,27 @@ describe UsersController do
 
   context "with new user" do
 
+    let(:params) { Fabricate.attributes_for(:user) }
+
     describe "GET new" do
       it "creates empty @user variable" do
-        get :new
+        get :new, user: {email: '', name: '', token: ''}
         expect(assigns(:user)).to be_a_new(User)
+      end
+
+      it "sets @user.email if present" do
+        get :new, user: params
+        expect(assigns(:user).email).to eq(params[:email])
+      end
+
+      it "sets @token if present" do
+        get :new, user: params.merge(id: 'token')
+        expect(assigns(:token)).to eq('token')
+      end
+
+      it "redirects to expired token page if token invalid" do
+        get :new, user: { token: 'invalid_token' }
+        expect(response).to redirect_to expired_token_path
       end
     end
 
@@ -19,23 +36,50 @@ describe UsersController do
 
     describe "POST create" do
 
-      before  { post :create, user: params }
-      after   { ActionMailer::Base.deliveries.clear }
-
       context "with valid input" do
 
         let(:params) { Fabricate.attributes_for(:user) }
 
         it "creates user" do
+          post :create, user: params
           expect(User.count).to eq 1
-          expect(User.first.email).to eq params[:email]
         end
 
         it "redirects to home path" do
+          post :create, user: params
           expect(response).to redirect_to home_path
         end
 
+        it "makes user a leading influence if invited" do
+          inviter = Fabricate(:user)
+          inviter.invitations << Fabricate(:invitation, email: params[:email])
+          inviter.invitations.first.send_invitation
+          token = inviter.invitations.first.invitation_token
+          post :create, user: params.merge(id: token)
+          expect(inviter.followers.first).to eq User.second
+        end
+
+        it "makes friend a leading influence if inviter" do
+          inviter = Fabricate(:user)
+          inviter.invitations << Fabricate(:invitation, email: params[:email])
+          inviter.invitations.first.send_invitation
+          token = inviter.invitations.first.invitation_token
+          post :create, user: params.merge(id: token)
+          expect(User.second.followers.first).to eq inviter
+        end
+
+        it "destroys accepted invitation" do
+          inviter = Fabricate(:user)
+          inviter.invitations << Fabricate(:invitation, email: params[:email])
+          inviter.invitations.first.send_invitation
+          token = inviter.invitations.first.invitation_token
+          post :create, user: params.merge(id: token)
+          expect(Invitation.count).to eq 0
+        end
+
         context "sending email" do
+
+          before { post :create, user: params }
 
           it "sends email" do
             expect(ActionMailer::Base.deliveries).to_not be_empty
@@ -54,6 +98,8 @@ describe UsersController do
       end
 
       context "with invalid input" do
+
+        before { post :create, user: params }
 
         let(:params) { Fabricate.attributes_for(:user, password: '') }
 
