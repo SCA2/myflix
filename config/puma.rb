@@ -9,8 +9,7 @@ port        ENV['PORT']     || 3000
 environment ENV['RACK_ENV'] || 'development'
 
 on_worker_boot do
-  # Worker specific setup for Rails 4.1+
-  # See: https://devcenter.heroku.com/articles/deploying-rails-applications-with-the-puma-web-server#on-worker-boot
+
   ActiveRecord::Base.establish_connection
   
   @sidekiq_pid ||= spawn("bundle exec sidekiq -c 2")
@@ -18,4 +17,5 @@ on_worker_boot do
   Sidekiq.configure_client do |config|
     config.redis = { size: 1, url: ENV["REDISTOGO_URL"] }
   end
+
 end
