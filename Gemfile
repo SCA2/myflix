@@ -15,7 +15,6 @@ gem 'sidekiq', '~>3.4.2'
 gem 'puma', '~> 2.12.2'
 
 group :development do
-  # gem 'thin', '~> 1.6.3'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'letter_opener'
