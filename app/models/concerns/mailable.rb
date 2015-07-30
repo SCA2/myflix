@@ -4,30 +4,14 @@ module Mailable
   
   include Tokenable
 
-  def method_missing(method_sym, *arguments, &block)
-    if method_match?(method_sym)
-      send_mail(@method_name)
-    else
-      super
-    end
-  end
-
-  def respond_to_missing?(method_sym, include_private = false)
-    method_match?(method_sym) || super
-  end
-
-  private
-
-  def send_mail(column)
-    generate_token("#{column}_token")
-    eval "self.#{column}_sent_at = Time.zone.now"
-    save!
-    eval "UserMailer.#{column}(self).deliver"
-  end
-
-  def method_match?(symbol)
-    if symbol.to_s =~ /^send_(.*)$/
-      @method_name = $1
+  def send_mail(mailer)
+    token_column = "#{mailer}_token"
+    sent_at_column = "#{mailer}_sent_at"
+    if self.has_attribute?(token_column) && self.has_attribute?(sent_at_column)
+      generate_token(token_column)
+      self[sent_at_column] = Time.zone.now
+      save!
+      eval "UserMailer.#{mailer}(self).deliver"
     end
   end
 

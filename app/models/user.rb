@@ -56,6 +56,10 @@ class User < ActiveRecord::Base
     leader_influences.create(leader_id: user.id) if can_follow?(user)
   end
 
+  def send_password_reset
+    send_mail('password_reset')
+  end
+
   def cleanup_password_reset
     update!(password_reset_token: nil, password_reset_sent_at: nil)
   end

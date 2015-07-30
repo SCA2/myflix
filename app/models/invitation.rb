@@ -7,4 +7,8 @@ class Invitation < ActiveRecord::Base
   validates :email, uniqueness: true
   validates :email, :name, :message, presence: true
 
+  def send_invitation
+    send_mail('invitation')
+  end
+
 end
