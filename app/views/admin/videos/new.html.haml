@@ -1,0 +1,24 @@
+%section.admin_add_video
+  .container
+    .row
+      .col-md-10.col-md-offset-1
+        = bootstrap_form_for [:admin, @video], layout: :horizontal do |f|
+          %ul.nav.nav-tabs
+            %li
+              %a(href="/ui/admin_views_payments") Recent Payments
+            %li.active
+              %a(href="") Add a New Video
+          %br
+          %fieldset.col-sm-9
+            .form-group
+              = f.text_field :title
+            .form-group
+              = f.select :category_id, options_for_select(Category.all.map {|category| [category.name, category.id]}), class: "form-control"
+            .form-group
+              = f.text_area :description, rows: 8, class: "form-control"
+            .form-group
+              = f.file_field :large_cover_url, label: "Large Cover", class: "form-control"
+            .form-group
+              = f.file_field :small_cover_url, label: "Small Cover", class: "form-control"
+            .control-group.col-sm-offset-2
+              = f.submit "Add Video", label: "", class: "btn btn-default"
