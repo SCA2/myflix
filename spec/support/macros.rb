@@ -16,6 +16,14 @@ def sign_in_user(user=nil)
   click_button "Sign in"
 end
 
+def sign_in_admin(admin=nil)
+  admin ||= Fabricate(:admin)
+  visit sign_in_path
+  fill_in "Email Address", with: "#{admin.email}"
+  fill_in "Password", with: "#{admin.password}"
+  click_button "Sign in"
+end
+
 def sign_out_user
   visit sign_out_path
 end

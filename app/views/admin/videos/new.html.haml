@@ -17,8 +17,10 @@
             .form-group
               = f.text_area :description, rows: 8, class: "form-control"
             .form-group
-              = f.file_field :large_cover_url, label: "Large Cover", class: "form-control"
+              = f.file_field :large_cover, class: "form-control"
             .form-group
-              = f.file_field :small_cover_url, label: "Small Cover", class: "form-control"
+              = f.file_field :small_cover, class: "form-control"
+            .form-group
+              = f.text_field :video_url, label: "Video URL", class: "form-control"
             .control-group.col-sm-offset-2
               = f.submit "Add Video", label: "", class: "btn btn-default"
