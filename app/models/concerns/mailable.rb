@@ -11,7 +11,7 @@ module Mailable
       generate_token(token_column)
       self[sent_at_column] = Time.zone.now
       save!
-      eval "UserMailer.#{mailer}(self).deliver"
+      UserMailer.send(mailer, self).deliver if UserMailer.respond_to?(mailer)
     end
   end
 
