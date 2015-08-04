@@ -15,6 +15,7 @@ gem 'sidekiq', '~>3.4.2'
 gem 'puma', '~> 2.12.2'
 gem 'carrierwave'
 gem 'mini_magick'
+gem 'figaro'
 
 group :development do
   gem 'better_errors'

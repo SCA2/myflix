@@ -16,3 +16,9 @@
 
 # Ignore username & password
 config/database.yml
+
+# Ignore application configuration
+/config/application.yml
+
+# Ignore .old files
+*.old
