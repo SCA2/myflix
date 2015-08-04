@@ -9,7 +9,7 @@ Myflix::Application.routes.draw do
   get   '/my_queue',  to: 'queue_items#index'
   post  '/my_queue',  to: 'queue_items#update_queue'
   get   '/people',    to: 'influences#index'
-  
+
   resources :videos, only: [:index, :show] do
     collection do
       get :search,    to: "videos#search"
@@ -32,6 +32,10 @@ Myflix::Application.routes.draw do
 
   resources :invitations, only: [:new, :create]
 
+  namespace :admin do
+    resources :videos, only: [:new, :create]
+  end
+  
   get 'ui(/:action)', controller: 'ui'
 
 end

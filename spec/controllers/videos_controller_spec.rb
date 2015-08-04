@@ -9,6 +9,7 @@ describe VideosController do
     describe "GET index" do
       it "sets @categories variable" do
         category = Fabricate(:category)
+        Fabricate(:video, category: category)
         get :index
         expect(assigns(:categories)).to eq [category]
       end

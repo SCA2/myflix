@@ -5,15 +5,15 @@ deployment:
   production:
     branch: master
     commands:
-      - heroku maintenance:on --app myflix
-      - heroku pg:backups capture --app myflix
-      - git push git@heroku.com:myflix.git $CIRCLE_SHA1:refs/heads/master
-      - heroku run rake db:migrate --app myflix
-      - heroku maintenance:off --app myflix
+      - heroku maintenance:on --app floating_tor-1033
+      - heroku pg:backups capture --app floating_tor-1033
+      - git push git@heroku.com:floating_tor-1033.git $CIRCLE_SHA1:refs/heads/master
+      - heroku run rake db:migrate --app floating_tor-1033
+      - heroku maintenance:off --app floating_tor-1033
   staging:
     branch: staging
     commands:
-      - heroku maintenance:on --app myflix
-      - git push git@heroku.com:myflix.git $CIRCLE_SHA1:refs/heads/master
-      - heroku run rake db:migrate --app myflix
-      - heroku maintenance:off --app myflix
+      - heroku maintenance:on --app floating_tor-1033-staging
+      - git push git@heroku.com:floating_tor-1033-staging.git $CIRCLE_SHA1:refs/heads/master
+      - heroku run rake db:migrate --app floating_tor-1033-staging
+      - heroku maintenance:off --app floating_tor-1033-staging

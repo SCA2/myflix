@@ -13,30 +13,26 @@ describe Category do
   end
 
   describe "#recent_videos" do
+    
+    let!(:category) { Fabricate(:category) }
+    
     it "retrieves most recent 6 videos" do
-      t = Time.now
-      c = Category.create!(name: "Test Category")
-      7.times { |n| c.videos << Video.create!(title: "V#{n}", description: "D#{n}", created_at: t + n.days) }
-      expect(c.recent_videos).not_to include(c.videos[0])
+      7.times { |n| Fabricate(:video, category: category, created_at: Time.now + n.seconds) }
+      expect(category.recent_videos).not_to include(Video.first)
     end
 
     it "retrieves all videos if fewer than 6" do
-      t = Time.now
-      c = Category.create!(name: "Test Category")
-      5.times { |n| c.videos << Video.create!(title: "V#{n}", description: "D#{n}", created_at: t + n.days) }
-      expect(c.recent_videos).to match_array(c.videos.all)
+      5.times { |n| Fabricate(:video, category: category, created_at: Time.now + n.days) }
+      expect(category.recent_videos).to match_array(category.videos.all)
     end
 
-    it "retrieves videos in reverse chron order" do
-      t = Time.now
-      c = Category.create!(name: "Test Category")
-      7.times { |n| c.videos << Video.create!(title: "V#{n}", description: "D#{n}", created_at: t + n.days) }
-      expect(c.recent_videos).to eq c.videos.reorder(created_at: :desc).first(6)
+    it "retrieves videos in reverse chronological order" do
+      7.times { |n| Fabricate(:video, category: category, created_at: Time.now + n.days) }
+      expect(category.recent_videos).to eq category.videos.reorder(created_at: :desc).first(6)
     end
   
     it "returns empty array if category is empty" do
-      c = Category.create!(name: "Test Category")
-      expect(c.recent_videos).to eq []
+      expect(category.recent_videos).to eq []
     end
   
   end

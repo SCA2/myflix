@@ -4,7 +4,7 @@ feature 'User follows another user' do
 
   let(:user_2)    { Fabricate(:user) }
   let(:category)  { Fabricate(:category) }
-  let!(:video)    { category.videos.first }
+  let(:video)    { Fabricate(:video, category: category) }
 
   scenario "user follows and un-follows someone" do
 

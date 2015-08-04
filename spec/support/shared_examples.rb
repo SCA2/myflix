@@ -33,3 +33,11 @@ shared_examples 'tokenable' do
     expect(token_1).to_not eq(token_2)
   end
 end
+
+shared_examples 'requires admin' do
+  it 'redirects regular user to home path' do
+    set_current_user
+    action
+    expect(response).to redirect_to home_path
+  end
+end

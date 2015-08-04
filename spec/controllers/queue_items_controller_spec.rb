@@ -16,8 +16,8 @@ describe QueueItemsController do
       end
     end
 
-    let(:video_1) { Fabricate(:video) }
-    let(:video_2) { Fabricate(:video) }
+    let(:video_1)   { Fabricate(:video) }
+    let(:video_2)   { Fabricate(:video) }
 
     describe 'POST create' do
       it 'creates a new queue_item' do
