@@ -13,8 +13,7 @@ describe Admin::VideosController do
     it 'initializes @video with new Video' do
       set_current_admin
       get :new
-      expect(assigns(:video)).to be_instance_of Video
-      expect(assigns(:video)).to be_new_record
+      expect(assigns(:video)).to be_a_new Video
     end
 
     it 'sets flash error for regular user' do
@@ -48,8 +47,11 @@ describe Admin::VideosController do
     context 'with valid input' do
       let!(:category) { Fabricate(:category) }
       let(:params)    { Fabricate.attributes_for(:video, category: category) }
-      before          { set_current_admin }
-      before          { post :create, video: params }
+
+      before do
+        set_current_admin
+        post :create, video: params
+      end
 
       it 'creates a new video' do
         expect(category.videos.count).to eq 1
@@ -66,8 +68,11 @@ describe Admin::VideosController do
 
     context 'with invalid input' do
       let(:params)  { Fabricate.attributes_for(:video, category: nil) }
-      before        { set_current_admin }
-      before        { post :create, video: params }
+
+      before do
+        set_current_admin
+        post :create, video: params
+      end
 
       it 'does not create a new video' do
         expect(Video.count).to eq 0
@@ -78,8 +83,7 @@ describe Admin::VideosController do
       end
 
       it 'initializes @video' do
-        expect(assigns(:video)).to be_instance_of Video
-        expect(assigns(:video)).to be_new_record
+        expect(assigns(:video)).to be_a_new Video
       end
 
       it 'sets flash error message' do
