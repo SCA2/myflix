@@ -16,6 +16,7 @@ gem 'puma', '~> 2.12.2'
 gem 'carrierwave'
 gem 'mini_magick'
 gem 'figaro'
+gem 'stripe'
 
 group :development do
   gem 'better_errors'
@@ -37,6 +38,7 @@ group :test do
   gem 'capybara'
   gem 'capybara-email'
   gem 'launchy'
+  gem 'stripe-ruby-mock', :require => 'stripe_mock'
 end
 
 group :production do

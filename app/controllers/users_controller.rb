@@ -4,10 +4,14 @@ class UsersController < ApplicationController
   before_action :authorize, only: [:show]
 
   def new
-    @user = User.new(user_params)
-    @token = params[:user][:id]
-    redirect_to expired_token_path unless
-      @token && Invitation.find_by(invitation_token: @token)
+    if params[:user]
+      @user = User.new(user_params)
+      @token = params[:user][:id]
+      redirect_to expired_token_path unless
+        @token && Invitation.find_by(invitation_token: @token)
+    else
+      @user = User.new
+    end
   end
 
   def show
@@ -22,6 +26,18 @@ class UsersController < ApplicationController
     @friend = @invitation.user if @invitation
     if @user.save
       mutual_friends if @friend
+
+      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+      begin
+        charge = Stripe::Charge.create(
+          amount:       999,
+          currency:     "usd",
+          source:       params[:stripeToken],
+          description:  "MyFlix sign up charge for #{@user.email}"
+        )
+      rescue Stripe::CardError => e
+        Rails.logger.error { "#{e.message} #{e.backtrace.join("\n")}" }
+      end      
       UserMailer.welcome(@user).deliver
       sign_in @user
       flash[:success] = "Signed up!"

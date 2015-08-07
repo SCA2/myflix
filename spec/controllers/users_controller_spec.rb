@@ -38,10 +38,12 @@ describe UsersController do
 
       context "with valid input" do
 
+        before { StripeMock.start }
+        after { StripeMock.stop }
         let(:params) { Fabricate.attributes_for(:user) }
 
         it "creates user" do
-          post :create, user: params
+          post :create, user: params#.merge(stripeToken: card_token)
           expect(User.count).to eq 1
         end
 

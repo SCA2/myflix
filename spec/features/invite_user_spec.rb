@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 feature 'invite a friend' do
-  
+
+  before { StripeMock.start }
+  after { StripeMock.stop }
   let(:invitation)  { Fabricate.attributes_for(:invitation) }
   let!(:user)       { Fabricate(:user) }
   
