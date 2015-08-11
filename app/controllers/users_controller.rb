@@ -43,7 +43,7 @@ class UsersController < ApplicationController
         render :new
       end
     else
-      flash[:error] = "Sorry, can't complete sign up"
+      flash[:error] = "Sorry, can't complete sign up. Please correct any errors below."
       render :new
     end
   end
@@ -63,7 +63,7 @@ class UsersController < ApplicationController
   end
 
   def stripe_params(options = {})
-    params.require(:user).permit(:source).merge(options)
+    params.permit(:source).merge(options)
   end
 
   def mutual_friends
