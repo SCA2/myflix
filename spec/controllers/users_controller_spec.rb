@@ -36,12 +36,14 @@ describe UsersController do
 
     describe "POST create" do
 
-      context "with valid input" do
+      context "with valid user info" do
+
+        let(:stripe_token) { StripeMock.create_test_helper.generate_card_token }
 
         before  { StripeMock.start }
         after   { StripeMock.stop }
         
-        let(:params)  { Fabricate.attributes_for(:user) }
+        let(:params)  { Fabricate.attributes_for(:user, source: stripe_token) }
 
         it "creates user" do
           post :create, user: params
@@ -98,15 +100,58 @@ describe UsersController do
             expect(message.body).to include(params[:name])
           end
         end
+
+        context "with valid credit card" do
+
+          it "calls StripeWrapper::Charge" do
+            expect(StripeWrapper::Charge).to receive(:create).and_call_original
+            post :create, user: params
+          end
+
+          it "sets flash success message" do
+            post :create, user: params
+            expect(flash[:success]).to be_present
+          end
+
+          it "redirects to home path" do
+            post :create, user: params
+            expect(response).to redirect_to home_path
+          end
+        end
+
+        context "with invalid credit card" do
+
+          before { StripeMock.prepare_card_error(:card_declined) }
+          
+          it "calls StripeWrapper::Charge" do
+            expect(StripeWrapper::Charge).to receive(:create).and_call_original
+            post :create, user: params
+          end
+
+          it "does not create new user" do
+            post :create, user: params
+            expect(User.count).to eq 0
+          end
+
+          it "sets flash error message" do
+            post :create, user: params
+            expect(flash[:error]).to eq "The card was declined"
+          end
+
+          it "renders :new template" do
+            post :create, user: params
+            expect(response).to render_template :new
+          end
+        end
       end
 
-      context "with invalid input" do
+      context "with invalid user info" do
 
         before { post :create, user: params }
 
         let(:params) { Fabricate.attributes_for(:user, password: '') }
 
-        it "does not create user" do
+        it "does not create new user" do
           expect(User.count).to eq 0
         end
 
@@ -120,6 +165,10 @@ describe UsersController do
 
         it "does not send email" do
           expect(ActionMailer::Base.deliveries).to be_empty
+        end
+
+        it "does not attempt to charge a card" do
+          expect(StripeWrapper::Charge).not_to receive(:create)
         end
       end
     end

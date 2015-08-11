@@ -24,25 +24,26 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     @invitation = Invitation.find_by(token_params)
     @friend = @invitation.user if @invitation
-    if @user.save
-      mutual_friends if @friend
-
-      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-      begin
-        charge = Stripe::Charge.create(
-          amount:       999,
-          currency:     "usd",
-          source:       params[:stripeToken],
-          description:  "MyFlix sign up charge for #{@user.email}"
+    if @user.valid?
+      charge = StripeWrapper::Charge.create(
+        stripe_params(
+          amount: 999,
+          description: "MyFlix sign up charge for #{@user.email}"
         )
-      rescue Stripe::CardError => e
-        Rails.logger.error { "#{e.message} #{e.backtrace.join("\n")}" }
-      end      
-      UserMailer.welcome(@user).deliver
-      sign_in @user
-      flash[:success] = "Signed up!"
-      redirect_to home_path
+      )
+      if charge.successful?
+        @user.save
+        mutual_friends if @friend
+        UserMailer.welcome(@user).deliver
+        sign_in @user
+        flash[:success] = "Signed up!"
+        redirect_to home_path
+      else
+        flash[:error] = charge.error_message
+        render :new
+      end
     else
+      flash[:error] = "Sorry, can't complete sign up"
       render :new
     end
   end
@@ -59,6 +60,10 @@ class UsersController < ApplicationController
 
   def token_params
     params.require(:user).permit(:invitation_token)
+  end
+
+  def stripe_params(options = {})
+    params.require(:user).permit(:source).merge(options)
   end
 
   def mutual_friends

@@ -39,6 +39,9 @@ group :test do
   gem 'capybara-email'
   gem 'launchy'
   gem 'stripe-ruby-mock', :require => 'stripe_mock'
+  gem 'vcr'
+  gem 'webmock'
+  gem 'selenium-webdriver'
 end
 
 group :production do

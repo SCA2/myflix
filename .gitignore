@@ -20,5 +20,8 @@ config/database.yml
 # Ignore application configuration
 /config/application.yml
 
+# Ignore all VCR cassettes
+/spec/cassettes/
+
 # Ignore .old files
 *.old
