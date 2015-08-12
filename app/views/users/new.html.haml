@@ -1,7 +1,12 @@
+= content_for :head do
+  %script(src="https://js.stripe.com/v2/")
+  :javascript
+    Stripe.setPublishableKey("#{ENV['STRIPE_PUBLISHABLE_KEY']}")
+
 %section.register.container
   .row
     .col-sm-10.col-sm-offset-1
-      = bootstrap_form_for(@user, layout: :horizontal, label_col: "col-sm-2", control_col: "col-sm-6") do |f|
+      = bootstrap_form_for(@user, layout: :horizontal, html: { id: 'payment-form' }, label_col: "col-sm-3", control_col: "col-sm-4") do |f|
         %header
           %h1 Register
         %fieldset
@@ -9,6 +14,25 @@
           = f.email_field :email, label: "Email Address"
           = f.password_field :password, label: "Password"
           = f.text_field :name, label: "Full Name"
-        %fieldset.actions.control-group.col-sm-offset-2
-          .controls
-            %input(type="submit" value="Sign Up" class="btn btn-default")
+        %fieldset.credit_card
+          %span.payment-errors
+          .form-group
+            .col-sm-3
+              = label_tag :card_number, "Credit Card Number", class: 'pull-right'
+            .col-sm-4
+              = text_field_tag :card_number, nil, name: nil, placeholder: "Card Number", data: { stripe: 'number' }, class: 'form-control'
+          .form-group
+            .col-sm-3
+              = label_tag :security_code, "Security Code", class: 'pull-right'
+            .col-sm-4
+              = text_field_tag :security_code, nil, name: nil, placeholder: "CVC", data: { stripe: 'cvc' }, class: 'form-control'
+          .form-group
+            %label.control-label.col-sm-3 Expiration
+            .col-sm-2
+              = select_month(Date.today, {add_month_numbers: true},  class: 'form-control', data: {stripe: 'exp-month'})
+            .col-sm-2
+              = select_year(Date.today.year, {start_year: Date.today.year, end_year: Date.today.year + 4}, class: 'form-control', data: {stripe: 'exp-year'})
+          .form-group
+            .col-sm-3
+            .col-sm-4
+              %input(type="submit" value="Sign Up" class="btn btn-default")

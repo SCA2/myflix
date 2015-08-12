@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 feature 'invite a friend' do
-  
+
   let(:invitation)  { Fabricate.attributes_for(:invitation) }
   let!(:user)       { Fabricate(:user) }
   
-  scenario 'signed-in user invites a friend to join' do
+  scenario 'signed-in user invites a friend to join', vcr: true, js: true do
     sign_in_user(user)
     invite_a_friend
     verify_invitation_sent
@@ -22,9 +22,9 @@ feature 'invite a friend' do
 
   def invite_a_friend
     visit new_invitation_path
-    fill_in "invitation_name", with: invitation[:name]
-    fill_in "invitation_email", with: invitation[:email]
-    fill_in "invitation_message", with: invitation[:message]
+    fill_in "Friend's Name", with: invitation[:name]
+    fill_in "Friend's Email Address", with: invitation[:email]
+    fill_in "Invitation Message", with: invitation[:message]
     click_button "Send"
   end
 
@@ -43,6 +43,10 @@ feature 'invite a friend' do
   def friend_signs_up
     fill_in "user_name", with: invitation[:name]
     fill_in "user_password", with: 'password'
+    fill_in "Credit Card Number", with: '4242424242424242'
+    fill_in "Security Code", with: '123'
+    select "7 - July", from: "date_month"
+    select "2016", from: "date_year"
     click_button "Sign Up"
     expect(page).to have_content "Welcome, #{invitation[:name]}"
   end
