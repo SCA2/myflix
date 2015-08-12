@@ -12,4 +12,8 @@ class Video < ActiveRecord::Base
     return [] if query.blank?
     where("title ILIKE ?", "%#{query}%").all.sorted
   end
+
+  def rating
+    reviews.average(:rating).round(1) if reviews.average(:rating)
+  end
 end
