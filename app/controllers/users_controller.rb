@@ -22,28 +22,13 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @invitation = Invitation.find_by(token_params)
-    @friend = @invitation.user if @invitation
-    if @user.valid?
-      charge = StripeWrapper::Charge.create(
-        stripe_params(
-          amount: 999,
-          description: "MyFlix sign up charge for #{@user.email}"
-        )
-      )
-      if charge.successful?
-        @user.save
-        mutual_friends if @friend
-        UserMailer.welcome(@user).deliver
-        sign_in @user
-        flash[:success] = "Signed up!"
-        redirect_to home_path
-      else
-        flash[:error] = charge.error_message
-        render :new
-      end
+    response = UserSignup.new(@user).sign_up(token_params, stripe_params)
+    if response.successful?
+      sign_in @user
+      flash[:success] = "Signed up!"
+      redirect_to home_path
     else
-      flash[:error] = "Sorry, can't complete sign up. Please correct any errors below."
+      flash.now[:error] = response.error_message
       render :new
     end
   end
@@ -62,14 +47,8 @@ class UsersController < ApplicationController
     params.require(:user).permit(:invitation_token)
   end
 
-  def stripe_params(options = {})
-    params.permit(:source).merge(options)
-  end
-
-  def mutual_friends
-    @user.follow(@friend)
-    @friend.follow(@user)
-    @invitation.destroy
+  def stripe_params
+    params.permit(:source)
   end
 
 end
