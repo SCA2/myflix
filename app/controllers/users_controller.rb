@@ -28,7 +28,7 @@ class UsersController < ApplicationController
       flash[:success] = "Signed up!"
       redirect_to home_path
     else
-      flash[:error] = response.error_message
+      flash.now[:error] = response.error_message
       render :new
     end
   end

@@ -20,17 +20,15 @@ class UserSignup
         mutual_friends if @friend
         UserMailer.welcome(@user).deliver
         @status = :success
-        self
       else
         @status = :failure
         @error_message = charge.error_message
-        self
       end
     else
       @status = :failure
       @error_message = "Sorry, can't complete sign up. Please correct any errors below."
-      self
     end
+    self
   end
 
   def successful?
