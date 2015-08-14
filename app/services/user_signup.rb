@@ -11,7 +11,7 @@ class UserSignup
     @friend = @invitation.user if @invitation
     if @user.valid?
       charge = StripeWrapper::Charge.create(
-        source: stripe_params,
+        source: stripe_params[:source],
         amount: 999,
         description: "MyFlix sign up charge for #{@user.email}"
       )
