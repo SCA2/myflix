@@ -36,123 +36,36 @@ describe UsersController do
 
     describe "POST create" do
 
-      context "with valid user info" do
+      context "successful user sign up" do
 
-        let(:stripe_token) { StripeMock.create_test_helper.generate_card_token }
-
-        before  { StripeMock.start }
-        after   { StripeMock.stop }
+        let(:params)  { Fabricate.attributes_for(:user) }
+        let(:result)  { double(:sign_up_result, successful?: true) }
         
-        let(:params)  { Fabricate.attributes_for(:user, source: stripe_token) }
-
-        it "creates user" do
+        before do
+          expect_any_instance_of(UserSignup).to receive(:sign_up).and_return(result)
           post :create, user: params
-          expect(User.count).to eq 1
+        end
+
+        it "sets flash success message" do
+          expect(flash[:success]).to be_present
         end
 
         it "redirects to home path" do
-          post :create, user: params
           expect(response).to redirect_to home_path
-        end
-
-        it "makes user a leading influence if invited" do
-          inviter = Fabricate(:user)
-          inviter.invitations << Fabricate(:invitation, email: params[:email])
-          inviter.invitations.first.send_invitation
-          token = inviter.invitations.first.invitation_token
-          post :create, user: params.merge(id: token)
-          expect(inviter.followers.first).to eq User.second
-        end
-
-        it "makes friend a leading influence if inviter" do
-          inviter = Fabricate(:user)
-          inviter.invitations << Fabricate(:invitation, email: params[:email])
-          inviter.invitations.first.send_invitation
-          token = inviter.invitations.first.invitation_token
-          post :create, user: params.merge(id: token)
-          expect(User.second.followers.first).to eq inviter
-        end
-
-        it "destroys accepted invitation" do
-          inviter = Fabricate(:user)
-          inviter.invitations << Fabricate(:invitation, email: params[:email])
-          inviter.invitations.first.send_invitation
-          token = inviter.invitations.first.invitation_token
-          post :create, user: params.merge(id: token)
-          expect(Invitation.count).to eq 0
-        end
-
-        context "sending email" do
-
-          before { post :create, user: params }
-
-          it "sends email" do
-            expect(ActionMailer::Base.deliveries).to_not be_empty
-          end
-
-          it "sends to correct recipient" do
-            message = ActionMailer::Base.deliveries.last
-            expect(message.to.first).to eq params[:email]
-          end
-
-          it "has correct content" do
-            message = ActionMailer::Base.deliveries.last
-            expect(message.body).to include(params[:name])
-          end
-        end
-
-        context "with valid credit card" do
-
-          it "calls StripeWrapper::Charge" do
-            expect(StripeWrapper::Charge).to receive(:create).and_call_original
-            post :create, user: params
-          end
-
-          it "sets flash success message" do
-            post :create, user: params
-            expect(flash[:success]).to be_present
-          end
-
-          it "redirects to home path" do
-            post :create, user: params
-            expect(response).to redirect_to home_path
-          end
-        end
-
-        context "with invalid credit card" do
-
-          before { StripeMock.prepare_card_error(:card_declined) }
-          
-          it "calls StripeWrapper::Charge" do
-            expect(StripeWrapper::Charge).to receive(:create).and_call_original
-            post :create, user: params
-          end
-
-          it "does not create new user" do
-            post :create, user: params
-            expect(User.count).to eq 0
-          end
-
-          it "sets flash error message" do
-            post :create, user: params
-            expect(flash[:error]).to eq "The card was declined"
-          end
-
-          it "renders :new template" do
-            post :create, user: params
-            expect(response).to render_template :new
-          end
         end
       end
 
-      context "with invalid user info" do
+      context "with invalid credit card or user info" do
 
-        before { post :create, user: params }
+        let(:result)  { double(:sign_up_result, successful?: false, error_message: "Fail") }
+        
+        before do
+          expect_any_instance_of(UserSignup).to receive(:sign_up).and_return(result)
+          post :create, user: params
+        end
 
-        let(:params) { Fabricate.attributes_for(:user, password: '') }
-
-        it "does not create new user" do
-          expect(User.count).to eq 0
+        it "sets flash error message" do
+          expect(flash[:error]).to eq "Fail"
         end
 
         it "renders :new template" do
@@ -161,14 +74,6 @@ describe UsersController do
 
         it "creates empty @user variable" do
           expect(assigns(:user)).to be_a_new(User)
-        end
-
-        it "does not send email" do
-          expect(ActionMailer::Base.deliveries).to be_empty
-        end
-
-        it "does not attempt to charge a card" do
-          expect(StripeWrapper::Charge).not_to receive(:create)
         end
       end
     end
@@ -206,7 +111,5 @@ describe UsersController do
         expect(assigns(:queue)).to eq controller.current_user.queue_items
       end
     end
-
   end
-
 end
