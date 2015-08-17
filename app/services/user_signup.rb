@@ -10,19 +10,19 @@ class UserSignup
     @invitation = Invitation.find_by(token_params)
     @friend = @invitation.user if @invitation
     if @user.valid?
-      charge = StripeWrapper::Charge.create(
+      customer = StripeWrapper::Customer.create(
         source: stripe_params[:source],
-        amount: 999,
-        description: "MyFlix sign up charge for #{@user.email}"
+        plan: '1',
+        description: "Sign up #{@user.email} for MyFlix Basic"
       )
-      if charge.successful?
+      if customer.successful?
         @user.save
         mutual_friends if @friend
         UserMailer.welcome(@user).deliver
         @status = :success
       else
         @status = :failure
-        @error_message = charge.error_message
+        @error_message = customer.error_message
       end
     else
       @status = :failure
