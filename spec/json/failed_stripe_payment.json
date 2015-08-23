@@ -1,0 +1,77 @@
+{
+  "id": "evt_16d466Lk4JkEvTE32srCkpxA",
+  "created": 1440357942,
+  "livemode": false,
+  "type": "charge.failed",
+  "data": {
+    "object": {
+      "id": "ch_16d466Lk4JkEvTE3aJjQXQ06",
+      "object": "charge",
+      "created": 1440357942,
+      "livemode": false,
+      "paid": false,
+      "status": "failed",
+      "amount": 999,
+      "currency": "usd",
+      "refunded": false,
+      "source": {
+        "id": "card_16d457Lk4JkEvTE34R6y4D9i",
+        "object": "card",
+        "last4": "0341",
+        "brand": "Visa",
+        "funding": "credit",
+        "exp_month": 8,
+        "exp_year": 2016,
+        "fingerprint": "Iyr2oe8Rr09ASge4",
+        "country": "US",
+        "name": null,
+        "address_line1": null,
+        "address_line2": null,
+        "address_city": null,
+        "address_state": null,
+        "address_zip": null,
+        "address_country": null,
+        "cvc_check": "pass",
+        "address_line1_check": null,
+        "address_zip_check": null,
+        "tokenization_method": null,
+        "dynamic_last4": null,
+        "metadata": {
+        },
+        "customer": "cus_6qSR3LAjjYoCHv"
+      },
+      "captured": false,
+      "balance_transaction": null,
+      "failure_message": "Your card was declined.",
+      "failure_code": "card_declined",
+      "amount_refunded": 0,
+      "customer": "cus_6qSR3LAjjYoCHv",
+      "invoice": null,
+      "description": "Failed payment test",
+      "dispute": null,
+      "metadata": {
+      },
+      "statement_descriptor": null,
+      "fraud_details": {
+      },
+      "receipt_email": null,
+      "receipt_number": null,
+      "shipping": null,
+      "destination": null,
+      "application_fee": null,
+      "refunds": {
+        "object": "list",
+        "total_count": 0,
+        "has_more": false,
+        "url": "/v1/charges/ch_16d466Lk4JkEvTE3aJjQXQ06/refunds",
+        "data": [
+
+        ]
+      }
+    }
+  },
+  "object": "event",
+  "pending_webhooks": 0,
+  "request": "req_6qldyTxzcZKrPe",
+  "api_version": "2015-07-28"
+}

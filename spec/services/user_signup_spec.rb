@@ -11,7 +11,7 @@ describe UserSignup do
 
     context "with valid user and credit card info" do
 
-      let(:customer)    { double(:customer, successful?: true) }
+      let(:customer)    { double(:customer, successful?: true, customer_token: new_user[:customer_token]) }
       let(:user_params) { Fabricate.attributes_for(:user) }
 
       before { expect(StripeWrapper::Customer).to receive(:create).and_return(customer) }
@@ -19,6 +19,11 @@ describe UserSignup do
       it "creates user" do
         UserSignup.new(new_user).sign_up(token_params, stripe_params)
         expect(User.count).to eq 1
+      end
+
+      it "saves stripe customer token" do
+        UserSignup.new(new_user).sign_up(token_params, stripe_params)
+        expect(User.first.customer_token).to eq new_user[:customer_token]
       end
 
       context "invitations" do

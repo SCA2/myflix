@@ -74,6 +74,14 @@ describe StripeWrapper do
           expect(response).to be_successful
         end
 
+        it 'returns customer token', :vcr do
+          response = StripeWrapper::Customer.create(
+            plan:         '1',
+            source:       good_token,
+          )
+          expect(response.customer_token).to be_present
+        end
+
       end
       
       context 'with invalid card' do
@@ -92,6 +100,38 @@ describe StripeWrapper do
             source:       bad_token,
           )
           expect(response.error_message).to eq "Your card was declined."
+        end
+      end
+    end
+  end
+
+  describe StripeWrapper::Event do
+    describe '.retrieve' do
+      context 'with valid id' do
+
+        path = File.expand_path('../../json/valid_stripe_event.json', __FILE__)
+        let(:event) { JSON.parse File.read path }
+
+        it 'returns event', :vcr do
+          response = StripeWrapper::Event.retrieve(id: event['id'])
+          expect(response).to be_valid
+        end
+
+      end
+      
+      context 'with invalid id' do
+
+        path = File.expand_path('../../json/invalid_stripe_event.json', __FILE__)
+        let(:event) { JSON.parse File.read path }
+
+        it 'does not return event', :vcr do
+          response = StripeWrapper::Event.retrieve(id: event['id'])
+          expect(response).to_not be_valid
+        end
+
+        it 'captures the error message', :vcr do
+          response = StripeWrapper::Event.retrieve(id: event['id'])
+          expect(response.error_message).to include "Stripe::Event instance has invalid ID: nil"
         end
       end
     end

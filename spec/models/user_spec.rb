@@ -120,4 +120,13 @@ describe User do
     end
   end
 
+  describe "#deactivate" do
+    let(:user) { Fabricate(:user) }
+
+    it "deactivates active user" do
+      user.deactivate!
+      expect(user).not_to be_active
+    end
+  end
+
 end

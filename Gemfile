@@ -39,7 +39,6 @@ group :test do
   gem 'capybara'
   gem 'capybara-email'
   gem 'launchy'
-  gem 'stripe-ruby-mock', :require => 'stripe_mock'
   gem 'vcr'
   gem 'webmock'
   gem 'selenium-webdriver'

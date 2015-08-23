@@ -16,6 +16,7 @@ class UserSignup
         description: "Sign up #{@user.email} for MyFlix Basic"
       )
       if customer.successful?
+        @user.customer_token = customer.customer_token
         @user.save
         mutual_friends if @friend
         UserMailer.welcome(@user).deliver
