@@ -50,6 +50,11 @@ RSpec.configure do |config|
   
   # for VCR
   config.treat_symbols_as_metadata_keys_with_true_values = true
+
+  # for Elasticsearch
+  config.before(:each, elasticsearch: true) do
+    Video.__elasticsearch__.create_index! force: true
+  end
 end
 
 Capybara.configure do |config|

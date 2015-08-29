@@ -1,18 +1,20 @@
 %section#top-header.row
-  %h1.col-md-2
+  %h1.col-sm-2
     - if signed_in?
       = link_to "MyFLiX", home_path
     - else
       = link_to "MyFLiX", root_path
   - if signed_in?
-    %ul.col-md-4.clearfix
+    %ul.col-sm-5.clearfix
       %li= link_to "Videos", videos_path
       %li= link_to "My Queue", my_queue_path
       %li= link_to "People", people_path
-    = form_tag(search_videos_path, method: "get", class: "col-md-5 navbar-form search-query") do
-      .form-group
-        = text_field_tag("query", params[:query], type: :text, placeholder: "Search for videos here", class: "form-control")
-        = submit_tag "Search", name: nil, class: 'btn btn-default'
+      %li= link_to "Advanced Search", advanced_search_videos_path
+    .form-group.col-sm-3.title_search
+      = form_tag(search_videos_path, method: "get", class: "navbar-form") do
+        = search_field_tag("query1", params[:query1], type: :text, placeholder: "Search by title", class: "form-control")
+        = button_tag(id: "Title Search", type: "submit", class: 'btn btn-primary') do
+          %span.glyphicon.glyphicon-search
     #user_links.pull-right
       %ul
         %li.dropdown
