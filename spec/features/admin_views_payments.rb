@@ -18,6 +18,6 @@ feature 'admin views payments' do
     sign_in_user
     visit admin_payments_path
     expect(page).to have_content "Sorry, admins only"
-    expect(page).not_to have_content payment.reference_id
+    expect(page).to have_no_content payment.reference_id
   end
 end
