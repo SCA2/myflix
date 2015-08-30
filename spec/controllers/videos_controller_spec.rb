@@ -37,7 +37,7 @@ describe VideosController do
         b1 =  Fabricate(:video, title: 'b1')
         b2 =  Fabricate(:video, title: 'b2')
         c =   Fabricate(:video, title: 'c')
-        get :search, query: 'b'
+        get :search, query1: 'b'
         expect(assigns(:videos)).to eq [b1, b2]
       end
     end
