@@ -1,7 +1,7 @@
 class Review < ActiveRecord::Base
 
   belongs_to :user
-  belongs_to :video
+  belongs_to :video, touch: true
 
   attr_accessor :skip_rating_validation, :skip_body_validation
 

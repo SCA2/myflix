@@ -59,11 +59,12 @@ feature 'user interacts with the queue' do
 
   def verify_queue(videos)
     inputs = page.all("input#queue_items__order")
-    queue = page.all("a[href^='/videos/']")
-
-    expect(queue[0].text).to eq videos[2].title
-    expect(queue[1].text).to eq videos[0].title
-    expect(queue[2].text).to eq videos[1].title
+    within("section.my_queue") do
+      queue = page.all("a[href^='/videos/']")
+      expect(queue[0].text).to eq videos[2].title
+      expect(queue[1].text).to eq videos[0].title
+      expect(queue[2].text).to eq videos[1].title
+    end
   end
 
 end
