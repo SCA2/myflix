@@ -64,4 +64,8 @@ class User < ActiveRecord::Base
     update!(password_reset_token: nil, password_reset_sent_at: nil)
   end
 
+  def deactivate!
+    update_column(:active, false)
+  end
+
 end
