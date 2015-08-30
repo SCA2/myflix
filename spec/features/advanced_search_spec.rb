@@ -17,16 +17,6 @@ feature "User interacts with advanced search", :elasticsearch do
     click_on "Advanced Search"
   end
 
-  # background do
-  #   Fabricate(:video, title: "Star Wars: Episode 1")
-  #   Fabricate(:video, title: "Star Wars: Episode 2")
-  #   Fabricate(:video, title: "Star Trek")
-  #   Fabricate(:video, title: "Bride Wars", description: "some wedding movie!")
-  #   refresh_index
-  #   sign_in_user
-  #   click_on "Advanced Search"
-  # end
-
   scenario "user searches with title" do
     within(".advanced_search") do
       fill_in "query2", with: "Star Wars"
